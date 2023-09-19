@@ -14,6 +14,7 @@
 
 
 ## 1. Создание сети и первичная настройка оборудования
+Созданная схема приведена на [рисунке](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab01/Graf_shem.PNG)
 
 
 
