@@ -44,7 +44,7 @@
 
 ## 2. Создание сетей VLAN и настройка портов коммутатора на примере Sw1
 
-Список созданных VLAN на Sw1 !()
+Список созданных VLAN на Sw1 !(https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab01/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA%20VLAN%20Sw1.PNG)
 
 
 
