@@ -52,5 +52,6 @@
 ## 3. Создание маршрутизации между VLAN на роутере R1
 
 Производим настройку Subinterfaces на порту e0/0 маршрутизатора R1  
-![](
+![](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab01/conf_R1.PNG)
+
 
