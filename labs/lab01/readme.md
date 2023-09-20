@@ -63,4 +63,4 @@ C терминала VPC_B2 принадлежащего сети B_Net прои
     
     ![](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab01/ping%20VPC_B2.PNG)
     
-Полная настройка оборудования в [каталоге config]()
+Полная настройка оборудования в [каталоге config](https://github.com/Neytrin/Network-ingeneer/tree/main/labs/lab01/config)
