@@ -1,0 +1,123 @@
+  Attention, there are no fish here!!!
+Devilfish>en
+Password:
+Devilfish#sh run
+Building configuration...
+
+Current configuration : 1883 bytes
+!
+! Last configuration change at 12:19:52 MSK Wed Sep 20 2023
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+service compress-config
+!
+hostname Devilfish
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$/8zP$rqxTVtCqQEJfMqgJMrtOv0
+!
+username admin privilege 15 secret 5 $1$w5Zq$Q.F9Afofe9KwE5e9JsFh/0
+aaa new-model
+!
+!
+aaa session-id common
+clock timezone MSK 3 0
+!
+!
+no ip domain-lookup
+ip cef
+no ipv6 cef
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+vlan 1007
+ name B_Net
+!
+!
+interface Ethernet0/0
+ switchport access vlan 4
+ switchport mode access
+!
+interface Ethernet0/1
+ switchport access vlan 1007
+ switchport mode access
+!
+interface Ethernet0/2
+ switchport access vlan 1007
+ switchport mode access
+!
+interface Ethernet0/3
+!
+interface Ethernet1/0
+!
+interface Ethernet1/1
+ switchport trunk allowed vlan 3,4,1007
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 8
+ switchport mode trunk
+!
+interface Ethernet1/2
+!
+interface Ethernet1/3
+!
+interface Serial2/0
+ no ip address
+ shutdown
+ no fair-queue
+ serial restart-delay 0
+!
+interface Serial2/1
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial2/2
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial2/3
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Vlan3
+ description Management
+ ip address 192.168.3.12 255.255.255.0
+!
+ip default-gateway 192.168.3.1
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+access-list 1 permit 192.168.4.0 0.0.0.255
+!
+!
+control-plane
+!
+banner motd ^C   Attention, there are no fish here!!!   ^C
+!
+line con 0
+ session-timeout 30
+ password cisco
+ logging synchronous
+line aux 0
+line vty 0 4
+ password Pass!!
+!
+!
+end
+
+Devilfish#
