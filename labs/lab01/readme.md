@@ -60,5 +60,6 @@ C терминала VPC_B2 принадлежащего сети B_Net прои
  1. терминала VPC_B1 по адресу 192.168.107.2 в сети B_Net
  2. шлюза по адресу 192.168.107.1
  3. терминала VPC_B1 по адресу 192.168.4.2 в сети B_Net
+    
     ![](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab01/ping%20VPC_B2.PNG)
     
