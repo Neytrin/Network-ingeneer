@@ -87,7 +87,7 @@ no ip http secure-server
 !
 control-plane
 !
-banner motd ^C Attention!!! You bear full responsibility for interfering with th                                                                                                             e operation of the equipment. ^C
+banner motd ^C Attention!!! You bear full responsibility for interfering with the operation of the equipment. ^C
 !
 line con 0
 session-timeout 10
