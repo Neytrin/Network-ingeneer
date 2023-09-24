@@ -12,13 +12,19 @@
 ![Shem_lab02_EVE.PNG](Shem_lab02_EVE.PNG)
 производим настройку коммутаторов
 отключаем поиcк DNS командой _no ip domain-lookup_
+
 присвоение имени коммутатору _hostname Sw1_
+
 назначаем **class**  в качестве зашифрованного пароля доступа к привилигированному режиму _enable secret class_
 
 назначаем **cisco** в качестве паролей консоли и VTY
+
 назначаем logging synchronous для консоли
+
 настраиваем баннерное сообщение дня MOTD, команда _banner motd C Attention!!! You bear full responsibility for interfering with the operation of the equipment. C_
+
 задаем IP-address, указанный в таблице адресации для VLAN1 на всех коммутаторах
+
 копируем текущую конфигурацию в файл загрузочной конфигурации, команда _copy running-config startup-config_
 
 Результат первичной конфигурации на примере Sw1
