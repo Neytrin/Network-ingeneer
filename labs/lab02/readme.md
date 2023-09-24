@@ -33,11 +33,11 @@
 Результат первичной конфигурации на примере Sw1
 [Initial settings](Initial%20settings)
 
+![Ping_Sw1-Sw2.PNG](Ping_Sw1-Sw2.PNG)
 
+![Ping_Sw1-Sw3.PNG](Ping_Sw1-Sw3.PNG)
 
-
-
-
+![Ping_Sw2-Sw3.PNG](Ping_Sw2-Sw3.PNG)
 
 
 
