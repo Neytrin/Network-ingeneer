@@ -33,11 +33,27 @@
 Результат первичной конфигурации на примере Sw1
 [Initial settings](Initial%20settings)
 
+Проверка эхо-запрос от коммутатора Sw1 на коммутатор Sw2
 ![Ping_Sw1-Sw2.PNG](Ping_Sw1-Sw2.PNG)
-
+Проверка эхо-запрос от коммутатора Sw1 на коммутатор Sw3
 ![Ping_Sw1-Sw3.PNG](Ping_Sw1-Sw3.PNG)
-
+Проверка эхо-запрос от коммутатора Sw2 на коммутатор Sw3
 ![Ping_Sw2-Sw3.PNG](Ping_Sw2-Sw3.PNG)
 
 
+# 2.Выбор корневого моста
+Настраиваем задействованный в схеме, диапазон e0/0-3 интерфесов коммутаторов в режим работы Trunk следующими командами:
 
+Sw1(config)#interface range e0/0-3
+Sw1(config-if-range)#shutdown
+Sw1(config-if-range)#switchport trunk encapsulation dot1q
+Sw1(config-if-range)#switchport mode trunk
+Sw1(config-if-range)#exit
+
+Включаем на всех коммутаторах интерфейсы e0/1 и e0/3
+Sw1(config)#interface e0/1
+Sw1(config-if)#no shutdown
+Sw1(config-if)#interface e0/3
+Sw1(config-if)#no shutdown
+Sw1(config-if)#exit
+Sw1(config)#
