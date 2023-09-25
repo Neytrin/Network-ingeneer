@@ -11,6 +11,13 @@
 1. В программе EVE-NG создаем сетевые элементы и соединения согласно с условиями задания. [(рисунок 1)]
 ![Shem_lab02_EVE.PNG](Shem_lab02_EVE.PNG)
 
+Таблица адресов
+
+| Коммутатор | Интерфейс | IP адрес    | Маска подсети |
+|------------|-----------|-------------|---------------|
+| Sw1        | VLAN1     | 192.168.1.1 | 255.255.255.0 |
+| Sw2        | VLAN1     | 192.168.1.2 | 255.255.255.0 |
+| Sw3        | VLAN1     | 192.168.1.3 | 255.255.255.0 |
 
 производим настройку коммутаторов:
 
@@ -44,16 +51,26 @@
 # 2.Выбор корневого моста
 Настраиваем задействованный в схеме, диапазон e0/0-3 интерфесов коммутаторов в режим работы Trunk следующими командами:
 
-Sw1(config)#interface range e0/0-3
-Sw1(config-if-range)#shutdown
-Sw1(config-if-range)#switchport trunk encapsulation dot1q
-Sw1(config-if-range)#switchport mode trunk
-Sw1(config-if-range)#exit
+`Sw1(config)#interface range e0/0-3`
+
+`Sw1(config-if-range)#shutdown`
+
+`Sw1(config-if-range)#switchport trunk encapsulation dot1q`
+
+`Sw1(config-if-range)#switchport mode trunk`
+
+`Sw1(config-if-range)#exit`
 
 Включаем на всех коммутаторах интерфейсы e0/1 и e0/3
-Sw1(config)#interface e0/1
-Sw1(config-if)#no shutdown
-Sw1(config-if)#interface e0/3
-Sw1(config-if)#no shutdown
-Sw1(config-if)#exit
-Sw1(config)#
+
+`Sw1(config)#interface e0/1`
+
+`Sw1(config-if)#no shutdown`
+
+`Sw1(config-if)#interface e0/3`
+
+`Sw1(config-if)#no shutdown`
+
+`Sw1(config-if)#exit`
+
+
