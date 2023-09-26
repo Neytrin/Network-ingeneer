@@ -52,29 +52,21 @@
 
 ## 2.Выбор корневого моста
 Настраиваем задействованный в схеме, диапазон e0/0-3 интерфесов коммутаторов в режим работы Trunk следующими командами:
-
-`Sw1(config)#interface range e0/0-3`
-
-`Sw1(config-if-range)#shutdown`
-
-`Sw1(config-if-range)#switchport trunk encapsulation dot1q`
-
-`Sw1(config-if-range)#switchport mode trunk`
-
-`Sw1(config-if-range)#exit`
-
+````
+Sw1(config)#interface range e0/0-3
+Sw1(config-if-range)#shutdown
+Sw1(config-if-range)#switchport trunk encapsulation dot1q
+Sw1(config-if-range)#switchport mode trunk
+Sw1(config-if-range)#exit
+````
 Включаем на всех коммутаторах интерфейсы e0/1 и e0/3
-
-`Sw1(config)#interface e0/1`
-
-`Sw1(config-if)#no shutdown`
-
-`Sw1(config-if)#interface e0/3`
-
-`Sw1(config-if)#no shutdown`
-
-`Sw1(config-if)#exit`
-
+````
+Sw1(config)#interface e0/1
+Sw1(config-if)#no shutdown
+Sw1(config-if)#interface e0/3
+Sw1(config-if)#no shutdown
+Sw1(config-if)#exit
+````
 Отобразим данные протокола spanning-tree выполнив команду на каждом из трех коммутаторов
 
 ![Sh_PVST_Sw1.PNG](Sh_PVST_Sw1.PNG)
@@ -127,6 +119,21 @@ c собственным Bridge ID и роли всех активных пор�
 Sw2(config)#int e0/1
 Sw2(config-if)#spanning-tree cost 50
 ```
+Результат выполнения команд
+
+
+
+Данное измение не привело к измению Root портов на коммутаторах Sw2 e0/1 и Sw3 e0/3, поскольку они по-прежнему имеют 
+нименьшие значения стоимости маршрута до корневого коммутатора (root path cost-RPC)
+
+Sw2 e0/1 - RPC=50
+
+Sw3 e0/3 - RPC=100
+
+Изменился суммарный RPC для Sw3 e0/1 RPC=50+100=150, тогда как
+для Sw2 e0/3 RPC=100+100=200 остался прежним. В результате выбора кратчайшего маршрута Sw1-Sw2-Sw3
+происходит смена ролей, ранее заблокированный порт Sw2 e0/3 становится Designated, тогда как Sw3 e0/1 - Alternative.
+
 
 
 
