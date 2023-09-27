@@ -64,7 +64,7 @@ Sw1(config-if-range)#switchport trunk encapsulation dot1q
 Sw1(config-if-range)#switchport mode trunk
 Sw1(config-if-range)#exit
 ````
-Включаем  на всех коммутаторах интерфейсы e0/1 и e0/3
+Включаем на всех коммутаторах интерфейсы e0/1 и e0/3
 ````
 Sw1(config)#interface e0/1
 Sw1(config-if)#no shutdown
