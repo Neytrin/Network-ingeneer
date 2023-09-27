@@ -1,12 +1,12 @@
 # Практическое задание №2
 
-[1. Создание сети и настройка основных параметров устройства](https://github.com/Neytrin/Network-ingeneer/blob/24f49963935dfc81dc7d8ffb7fd22d9a7015d181/labs/lab02/readme.md#L11)
+1. [Создание сети и настройка основных параметров устройства](https://github.com/Neytrin/Network-ingeneer/blob/24f49963935dfc81dc7d8ffb7fd22d9a7015d181/labs/lab02/readme.md#L11)
 
-[2. Выбор корневого моста](https://github.com/Neytrin/Network-ingeneer/blob/24f49963935dfc81dc7d8ffb7fd22d9a7015d181/labs/lab02/readme.md#L53)
+2. [Выбор корневого моста](https://github.com/Neytrin/Network-ingeneer/blob/24f49963935dfc81dc7d8ffb7fd22d9a7015d181/labs/lab02/readme.md#L53)
 
-[3. Наблюдение за процессом выбора протоколом STP порта, исходя из стоимости портов](https://github.com/Neytrin/Network-ingeneer/blob/24f49963935dfc81dc7d8ffb7fd22d9a7015d181/labs/lab02/readme.md#L117)
+3. [Наблюдение за процессом выбора протоколом STP порта, исходя из стоимости портов](https://github.com/Neytrin/Network-ingeneer/blob/24f49963935dfc81dc7d8ffb7fd22d9a7015d181/labs/lab02/readme.md#L117)
 
-[4. Наблюдение за процессом выбора протоколом STP порта, исходя из приоритета портов](https://github.com/Neytrin/Network-ingeneer/blob/4cf80b4b2d7abb187da1791e68386b8d7d5c4fbe/labs/lab02/readme.md#L144)
+4. [Наблюдение за процессом выбора протоколом STP порта, исходя из приоритета портов](https://github.com/Neytrin/Network-ingeneer/blob/4cf80b4b2d7abb187da1791e68386b8d7d5c4fbe/labs/lab02/readme.md#L144)
 
 ## 1. Создание сети и настройка  основных параметров устройства
 
