@@ -1,6 +1,6 @@
 # Практическое задание №2
 
-1. [Создание сети и настройка основных параметров устройства](https://github.com/Neytrin/Network-ingeneer/blob/24f49963935dfc81dc7d8ffb7fd22d9a7015d181/labs/lab02/readme.md#L11)
+1. [Создание сети и настройка основных параметров устройства]([https://github.com/Neytrin/Network-ingeneer/blob/24f49963935dfc81dc7d8ffb7fd22d9a7015d181/labs/lab02/readme.md#L11](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab02/readme.md#1-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D1%81%D0%B5%D1%82%D0%B8-%D0%B8-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0--%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D0%BD%D1%8B%D1%85-%D0%BF%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D0%BE%D0%B2-%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0))
 
 2. [Выбор корневого моста](https://github.com/Neytrin/Network-ingeneer/blob/24f49963935dfc81dc7d8ffb7fd22d9a7015d181/labs/lab02/readme.md#L53)
 
