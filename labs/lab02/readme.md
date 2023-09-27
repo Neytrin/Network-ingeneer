@@ -43,12 +43,15 @@
 [Initial settings](Initial%20settings)
 
 Проверка эхо-запрос от коммутатора Sw1 на коммутатор Sw2
+
 ![Ping_Sw1-Sw2.PNG](Ping_Sw1-Sw2.PNG)
 
 Проверка эхо-запрос от коммутатора Sw1 на коммутатор Sw3
+
 ![Ping_Sw1-Sw3.PNG](Ping_Sw1-Sw3.PNG)
 
 Проверка эхо-запрос от коммутатора Sw2 на коммутатор Sw3
+
 ![Ping_Sw2-Sw3.PNG](Ping_Sw2-Sw3.PNG)
 
 
