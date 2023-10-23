@@ -1,4 +1,5 @@
-# Практическое задание №3
+## Практическое задание №3
+### Часть 1
 
 1. [Создание сети и настройка основных параметров устройств](https://github.com/Neytrin/Network-ingeneer/blob/b2fd1514d38af7efc84f9c17726639b0b8a388ff/labs/lab03/readme.md#L7)
 2. [Настройка и проверка двух серверов DHCPv4 на маршрутизаторе R1.](https://github.com/Neytrin/Network-ingeneer/blob/b2fd1514d38af7efc84f9c17726639b0b8a388ff/labs/lab03/readme.md#L206)
@@ -255,3 +256,31 @@ IP address 192.168.1.6
 
 ### 3. Настройка и проверка ретрансляции DHCPv4 на маршрутизаторе R2.
 
+Для ретрансляции широковещательных запросов в сторону сервера DHCP на интерфейсе e0/0 R2 задаем команду
+ip helper-address с указанием адреса порта e0/1 R1.
+````
+R2(config)#interface e0/0
+R2(config-if)#ip helper-address 192.168.1.1
+````
+![PC-B_1.PNG](PC-B_1.PNG)
+
+Сетевые настройки получены.
+
+Проверка подключения ping 192.168.1.1 адреса интерфейса e0/0 R1
+![PC-B_2.PNG](PC-B_2.PNG)
+
+Командой _show ip dhcp binding_
+выводим список всех привязок адресов IPv4 к MAC-адресам,
+предоставленных службой DHCPv4 на R1.
+
+![Sh_DHCP_R1_1.PNG](Sh_DHCP_R1_1.PNG)
+
+Командой _show ip dhcp server statistics_ проверяем, что сообщения DHCPv4
+принимаются или
+отправляются маршрутизатором
+
+![Sh_DHCP_R1_2.PNG](Sh_DHCP_R1_2.PNG)
+
+![Sh_DHCP_R2_1.PNG](Sh_DHCP_R2_1.PNG)
+
+### Часть 2
