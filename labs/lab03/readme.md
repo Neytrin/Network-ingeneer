@@ -2,7 +2,7 @@
 
 1. [Создание сети и настройка основных параметров устройств](https://github.com/Neytrin/Network-ingeneer/blob/b2fd1514d38af7efc84f9c17726639b0b8a388ff/labs/lab03/readme.md#L7)
 2. [Настройка и проверка двух серверов DHCPv4 на маршрутизаторе R1.](https://github.com/Neytrin/Network-ingeneer/blob/b2fd1514d38af7efc84f9c17726639b0b8a388ff/labs/lab03/readme.md#L206)
-3. [Настройка и проверка DHCP-релей на маршрутизаторе R2.]()
+3. [Настройка и проверка ретрансляции DHCPv4 на маршрутизаторе R2.]()
 
 ### 1. Создание сети и настройка основных параметров устройств
 
@@ -211,3 +211,47 @@ S2(config-if)#switchport mode access
 ````
 ip dhcp excluded-address 192.168.1.1 192.168.1.5
 ````
+Создаем DHCP pool
+````
+R1(config)#ip dhcp pool NET_A
+R1(dhcp-config)#network 192.168.1.0 255.255.255.192
+R1(dhcp-config)#domain-name ccna-lab.com.
+R1(dhcp-config)#default-router 192.168.1.1
+R1(dhcp-config)#lease 2 12 30
+````
+Исключаем первые пять доступных адресов из пула адресов сети C и настраиваем 
+DHCP pool по заданным параметрам
+````
+R1(config)#ip dhcp excluded-address 192.168.1.97 192.168.1.101
+R1(config)#ip dhcp pool R2_Client_LAN
+R1(dhcp-config)#domain-name ccna-lab.com.
+R1(dhcp-config)#network 192.168.1.96 255.255.255.240
+R1(dhcp-config)#default-router 192.168.1.97
+R1(dhcp-config)#lease 2 12 30
+R1(dhcp-config)#exit
+R1(config)#do write
+````
+Проверяем настройку сервера DHCPv4.
+````
+R1#sh ip dhcp pool
+````
+![Sh_DHCP_1.PNG](Sh_DHCP_1.PNG)
+````
+R1#show ip dhcp binding
+````
+![Sh_DHCP_2.PNG](Sh_DHCP_2.PNG)
+````
+show ip dhcp server statistics
+````
+![Sh_DHCP_3.PNG](Sh_DHCP_3.PNG)
+В момент проверки настроек PC-A произошел програмный сбой, до сбоя ему был назначен
+IP address 192.168.1.6
+После пересоздания VPC наблюдаем
+![PC-A_1.PNG](PC-A_1.PNG)
+Очевидно, что настройки от сервера DHCP еще не получены, поэтому делаем запрос и проверяем их получение
+![PC-A_2.PNG](PC-A_2.PNG)
+Осуществляем проверку подключения к сети командой Ping шлюза по умолчанию (IP адрес e0/1 R1)
+![PC-A_3.PNG](PC-A_3.PNG)
+
+### 3. Настройка и проверка ретрансляции DHCPv4 на маршрутизаторе R2.
+
