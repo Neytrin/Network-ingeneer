@@ -3,7 +3,7 @@
 
 1. [Создание сети и настройка основных параметров устройств](https://github.com/Neytrin/Network-ingeneer/blob/b2fd1514d38af7efc84f9c17726639b0b8a388ff/labs/lab03/readme.md#L7)
 2. [Настройка и проверка двух серверов DHCPv4 на маршрутизаторе R1.](https://github.com/Neytrin/Network-ingeneer/blob/b2fd1514d38af7efc84f9c17726639b0b8a388ff/labs/lab03/readme.md#L206)
-3. [Настройка и проверка ретрансляции DHCPv4 на маршрутизаторе R2.]()
+3. [Настройка и проверка ретрансляции DHCPv4 на маршрутизаторе R2.](https://github.com/Neytrin/Network-ingeneer/blob/88b0dd9bf08940c0fbc8fcce86dbcc96426115d2/labs/lab03/readme.md#L261)
 
 ### 1. Создание сети и настройка основных параметров устройств
 
