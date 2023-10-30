@@ -290,7 +290,7 @@ R2(config-if)#ip helper-address 192.168.1.1
 ### Часть 2
 
 1. [Создание сети и настройка основных параметров устройства](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab03/readme.md#1-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D1%81%D0%B5%D1%82%D0%B8-%D0%B8-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D0%BD%D1%8B%D1%85-%D0%BF%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D0%BE%D0%B2-%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0)
-2. [Проверка назначения адреса SLAAC от маршрутизатора R1.]()
+2. [Проверка назначения адреса SLAAC от маршрутизатора R1.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab03/readme.md#2-%D0%BF%D1%80%D0%BE%D0%B2%D0%B5%D1%80%D0%BA%D0%B0-%D0%BD%D0%B0%D0%B7%D0%BD%D0%B0%D1%87%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B0%D0%B4%D1%80%D0%B5%D1%81%D0%B0-slaac-%D0%BE%D1%82-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80%D0%B0-r1)
 3. [Настройка и проверка сервера DHCPv6 без отслеживания состояния на маршрутизаторе R1.]()
 4. [Настройка и проверка сервера DHCPv6 с отслеживанием состояния на маршрутизаторе R1.]()
 5. [Настройка и проверка ретраснсляции DHCPv6 на маршрутизаторе R2]()
