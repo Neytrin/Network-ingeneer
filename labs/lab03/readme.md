@@ -200,6 +200,7 @@ S2(config-if)#switchport mode access
 то для их приема на e0/0 S2 воспользовались VLAN1 являющимся defult native vlan.
 
 Проверка статуса транкинга
+
 ![sh_trunk S1.PNG](sh_trunk%20S1.PNG)
 
 На данный момент, какой IP-адрес был бы у ПК, если бы он был подключен к сети с помощью DHCP?
