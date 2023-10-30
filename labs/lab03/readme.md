@@ -408,6 +408,7 @@ R1(config-if)# ipv6 dhcp server R2-STATEFUL
 ### 5. Настройка и проверка ретраснсляции DHCPv6 на маршрутизаторе R2
 
 Проверим сетевые настройки PC-B
+
 ![IPv6 conf PC-B_1.PNG](IPv6%20conf%20PC-B_1.PNG)
 
 IPv6 адрес по-прежнему получен с помощью SLAAC от e0/0 R2.
@@ -423,6 +424,7 @@ R2(config-if)#ipv6 dhcp relay destination 2001:DB8:ACAD:2::1 e0/1
 R2(config-if)#ipv6 nd managed-config-flag
 ````
 Проверяем сетевые настройки PC-B
+
 ![PC-B_2_1.PNG](PC-B_2_1.PNG)
 
 Как видно настройки от сервера DHCPv6 не были получены. Для проверки добавим в схему 
