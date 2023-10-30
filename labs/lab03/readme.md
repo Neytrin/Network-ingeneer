@@ -416,4 +416,24 @@ R2(config-if)#ipv6 dhcp relay destination 2001:DB8:ACAD:2::1 e0/1
 ````
 R2(config-if)#ipv6 nd managed-config-flag
 ````
+Проверяем сетевые настройки PC-B
+![PC-B_2_1.PNG](PC-B_2_1.PNG)
 
+Как видно настройки от сервера DHCPv6 не были получены. Для проверки добавим в схему 
+маршрутизатор R7
+![Shem-Net-LAB03_R7.PNG](Shem-Net-LAB03_R7.PNG)
+
+Задаем для интерфейса e0/0 R7 команды
+````
+R7(config-if)# ip address dhcp
+R7(config-if)# ipv6 enable
+R7(config-if)# ipv6 address dhcp
+````
+После, проверяем результат командой
+````
+R7#sh ipv6 interface brief
+````
+![Sh_DHCP_R7.PNG](Sh_DHCP_R7.PNG)
+
+Теперь видно, что был назначен адрес с префиксом сети 2001:db8:acad:3:aaa
+полученном от сервера DHCPv6
