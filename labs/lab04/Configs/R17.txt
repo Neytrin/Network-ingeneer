@@ -1,0 +1,183 @@
+Current configuration : 2874 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R17
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$wQTH$k2aeQ3IfQwwcR8sE9f1Su/
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 172.18.1.1 172.18.1.4
+ip dhcp excluded-address 172.18.2.1 172.18.2.4
+!
+ip dhcp pool NET_101
+ network 172.18.1.0 255.255.255.0
+ domain-name SPetrburg.com
+ default-router 172.18.1.1
+ lease 2
+!
+ip dhcp pool NET_102
+ network 172.18.2.0 255.255.255.0
+ domain-name SPeterburg.com
+ default-router 172.18.2.1
+ lease 2
+!
+!
+!
+no ip domain lookup
+ip domain name SPeterburg2042.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$7q4a$raxfO68ERv22ewBQoFks9.
+!
+redundancy
+!
+!
+track 1 interface Ethernet0/1 line-protocol
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.23.13.17 255.255.255.255
+ ipv6 address 203A:34:701:8888::17/128
+ ipv6 enable
+!
+interface Ethernet0/0
+ no ip address
+!
+interface Ethernet0/0.101
+ description Client9
+ encapsulation dot1Q 101
+ ip address 172.18.1.3 255.255.255.0
+ standby version 2
+ standby 1 ip 172.18.1.1
+ standby 1 timers 1 5
+ standby 1 priority 150
+ standby 1 preempt
+ standby 1 name Client9v4
+ standby 1 track 1 shutdown
+ standby 3 ipv6 FE80::17:3
+ standby 3 ipv6 203A:34:701:101::1/64
+ standby 3 timers 1 5
+ standby 3 priority 150
+ standby 3 preempt
+ standby 3 name Client9V6
+ standby 3 track 1 shutdown
+ ipv6 address FE80::17:101 link-local
+ ipv6 address 203A:34:701:101::2/64
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_R18
+ ip address 172.18.13.2 255.255.255.252
+ ipv6 address FE80::16 link-local
+ ipv6 address 203A:34:701::1:16:18/96
+ ipv6 enable
+!
+interface Ethernet0/2
+ no ip address
+!
+interface Ethernet0/2.102
+ description Client10
+ encapsulation dot1Q 102
+ ip address 172.18.2.3 255.255.255.0
+ standby version 2
+ standby 2 ip 172.18.2.1
+ standby 2 timers 1 5
+ standby 2 preempt
+ standby 2 name Client10v4
+ standby 2 track 1 shutdown
+ standby 4 ipv6 FE80::17:4
+ standby 4 ipv6 203A:34:701:102::1/64
+ standby 4 timers 1 5
+ standby 4 preempt
+ standby 4 name Client10v6
+ standby 4 track 1 shutdown
+ ipv6 address FE80::17:102 link-local
+ ipv6 address 203A:34:701:102::2/64
+ ipv6 enable
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 172.18.3.2
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 094F471A1A0A
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 110A1016141D
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

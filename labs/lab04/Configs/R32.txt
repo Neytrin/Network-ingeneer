@@ -1,0 +1,126 @@
+Current configuration : 1431 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R32
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$fb/V$HcRtwLcWFqgPSznhTV8id.
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name SPeterburg2042.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$EyNp$o/hirUQvkg8cr9jEXAbV8.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.23.13.32 255.255.255.255
+ ipv6 address 203A:34:701:8888::32/128
+ ipv6 enable
+!
+interface Ethernet0/0
+ description to_R16
+ ip address 172.18.13.10 255.255.255.252
+ ipv6 address FE80::32 link-local
+ ipv6 address 203A:34:701::3:32:16/96
+ ipv6 enable
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 14141B180F0B
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 02050D480809
+ logging synchronous
+ login
+ transport input none
+!
+!
+end
