@@ -269,8 +269,162 @@ interface Ethernet0/3
 Пример настройки
 
 ````
+fhrp version vrrp v3
 
+interface Vlan10
+ description Client1
+ ip address 172.16.8.3 255.255.255.0
+ ipv6 address 203A:BB8A:D701:1010::3/64
+  vrrp 2 address-family ipv4
+  description Client1_ipv4
+  priority 150
+  address 172.16.8.1 primary
+  exit-vrrp
+ vrrp 21 address-family ipv6
+  description Client1_ipv6
+  priority 150
+  address FE80::4:4 primary
+  exit-vrrp
+````
+После настройки проверяем состояние всех настроенных VRRP
 
+![VRRP SW4.png](VRRP%20SW4.png)
 
+Настройка параметров VPC для IPv4 производится DHCP серверами сконфигурированными на SW4 и SW5, а для IPv6
+используем SLAAC и DHCP без контроля состояния.
 
+Пример настройки
+
+````
+ip dhcp excluded-address 172.16.8.1 172.16.8.4
+ip dhcp excluded-address 172.16.12.1 172.16.12.4
+!
+ip dhcp pool NET_10
+ network 172.16.8.0 255.255.255.0
+ domain-name Moskow1001.com
+ default-router 172.16.8.1
+ lease 2
+!
+ip dhcp pool NET_20
+ network 172.16.12.0 255.255.255.0
+ default-router 172.16.12.1
+ domain-name Moskow1001.com
+!
+!
+ipv6 dhcp pool SW4-Stateless
+ dns-server 203A:BB8A:D701:1001::1
+ domain-name Moskow1001.com
+````
+Просмотр сколько и каким VPC были выделены адреса.
+
+![DHCP BINDING.png](DHCP%20BINDING.png)
+
+Производим настроку портов на коммутаторах доступа SW2 и SW3 на примере SW3
+
+````
+interface Ethernet0/0
+ description to_SW4
+ switchport trunk allowed vlan 10,99
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport mode trunk
+!
+interface Ethernet0/1
+ description to_SW5
+ switchport trunk allowed vlan 10,99
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport mode trunk
+!
+interface Ethernet0/2
+ description to_VPC1
+ switchport access vlan 10
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0050.7966.6808
+ switchport port-security
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface Ethernet0/3
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface Ethernet1/0
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface Ethernet1/1
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface Ethernet1/2
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface Ethernet1/3
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface Vlan99
+ ip address 192.168.0.133 255.255.255.128
+ ipv6 address FE80::3 link-local
+ ipv6 address 203A:BB8A:D701:D::3/112
+ ipv6 enable
+!
+ip default-gateway 192.168.0.129
+````
+Не использованным портам назначен пустой VLAN и они административно отключены
+
+Проверяем настройки VPC1
+
+![Setting VPC1.png](Setting%20VPC1.png)
+
+![IPV6 VPC1.png](IPV6%20VPC1.png)
+
+Проверка доступности шлюза по умолчанию (адрес виртуального роутера) и адресов Interface VLAN10 на SW4 и SW5.
+![TEST VPC1.png](TEST%20VPC1.png)
+
+На этом настройка для офиса Москва завершена.
+
+Так-же выполнена настройка для офисов С.-Петербург и Чокурдак.
+
+Параметры настройки оборудования для всего стенда приведены в файлах конфигурации [здесь]()
 
