@@ -155,3 +155,118 @@
 |             | SW29     | VLAN88                 | Mgmt_SW29      | 192.168.0.218  | 255.255.255.252 | 192.168.0.217 | 203a:bb8a:d701:8888::1111:2/112 |              |
 |             | VPC30    | NIC                    |                | 172.16.30.2    | 255.255.255.0   | 172.16.30.1   | SLAAC+DHCPv6                    |              |
 |             | VPC31    | NIC                    |                | 172.16.31.2    | 255.255.255.0   | 172.16.31.1   | SLAAC+DHCPv6                    |              |
+
+Настройка оборудования приведена на примере офиса Москва.
+Здесь и далее для удобства работы с тестовым стендом певоначальные настройки у всех сетевых элементов одинаковы.
+Пример первичной настройки на примере R14
+````
+hostname R14
+username admin privilege 15 secret cisco
+no ip domain-lookup
+ip domain-name Moskow1001.ru
+service password-encryption
+enable secret class
+line console 0
+password 0 cisco
+logging synchronous
+login
+exec-timeout 0
+exit
+line vty 0 4
+password 0 cisco
+logging synchronous
+login
+exec-timeout 15
+exit
+banner motd ' Unauthorized access is strictly prohibited '
+clock timezone MSK 3
+do copy running-config startup-config
+````
+Вроде все стандартно, за исключение команды **_exec-timeout 0_**, которая задает бесконечное воемя работы через консоль, 
+сделано для удобства при работе со стендом. В реальной сети естественно будет выставлено ограничение времени бездействия 
+на сессию.
+Пример настройки интерфейсов на примере R14
+````
+ipv6 unicast-routing
+!
+interface Loopback0
+ ip address 192.168.0.14 255.255.255.255
+ ipv6 address 203A:BB8A:D701:8888::14/128
+ ipv6 enable
+!
+interface Ethernet0/0
+ description to_R12
+ ip address 192.168.1.0 255.255.255.254
+ ipv6 address FE80::14 link-local
+ ipv6 address 203A:BB8A:D701:2::14:12/64
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_R13
+ ip address 192.168.1.2 255.255.255.254
+ ipv6 address FE80::14 link-local
+ ipv6 address 203A:BB8A:D701:3::14:13/64
+ ipv6 enable
+!
+interface Ethernet0/2
+ description to_Kitorn
+ ip address 33.13.8.21 255.255.255.254
+ ipv6 address FE80::14 link-local
+ ipv6 address 203A:BB8A:D701::2/64
+ ipv6 enable
+ no cdp enable
+!
+interface Ethernet0/3
+ description to_R19
+ ip address 192.168.1.4 255.255.255.254
+ ipv6 address FE80::14 link-local
+ ipv6 address 203A:BB8A:D701:4::14:19/64
+ ipv6 enable
+````
+Помимо настроек интерфесов на всех роутерах включена IPv6 маршрутизация.
+
+Исходя из избыточности сети офиса Москва делается предположение что устройства SW4 и SW5 могут быть L3 коммутаторами.
+Таким образом можно уменьшить сегмент широковещательной сети, до уровня связей портов коммутаторов агрегации (SW4, SW5) 
+и коммутаторов доступа (SW2, SW3).
+
+Соединение между SW4 и SW5 настроено как агрегация LACP уровня L3.
+````
+interface Port-channel1
+ no switchport
+ ip address 192.168.1.21 255.255.255.254
+ ipv6 address FE80::4 link-local
+ ipv6 address 203A:BB8A:D701:C::4:5/64
+ ipv6 enable
+
+interface Ethernet0/2
+ no switchport
+ no ip address
+ duplex auto
+ channel-group 1 mode active
+!
+interface Ethernet0/3
+ no switchport
+ no ip address
+ duplex auto
+ channel-group 1 mode active
+````
+Проверяем статус агрегированного канала командой **_sh etherchannel sum_**
+Получаем результат
+
+![LACP SW4.png](LACP%20SW4.png)
+
+Настройка клиентских VLAN только на определенные коммутаторы доступа исключает образование петель
+Однако здесь схитрил и управление коммутаторами доступа SW2 и SW3 настроил в одном VLAN99. Таким образом образовалась петля
+которую отработал протокол PVST. В таком случае отключать протокол STP не стал, во избежание фатальных ошибок при
+дальнейших настройках.
+Произведены дополнительные настройки STP для VLAN99.
+Команда **_spanning-tree vlan 99 priority 16384_** устанавливает меньшее значение Root ID Priority, тем самым прозводится 
+выбор SW4 в качестве Root Bridge
+
+![STP SW4.png](STP%20SW4.png)
+
+
+
+
+
+
