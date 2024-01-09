@@ -1,0 +1,132 @@
+Current configuration : 1669 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R23
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$XXTE$ZDXMOLzuFutc/ggvhOgo3.
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name Triada520.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$1E1f$krunKQ8KFdbzjETCjmbXT.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.1.23 255.255.255.255
+ ipv6 address 203A:88A1:A789:8888::23/128
+ ipv6 enable
+!
+interface Ethernet0/0
+ description to_Kitorn
+ ip address 90.7.17.10 255.255.255.254
+ ipv6 address FE80::23 link-local
+ ipv6 address 203A:88A1:A789:1::1:2/112
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_R25
+ ip address 10.10.10.1 255.255.255.252
+ ipv6 address FE80::23 link-local
+ ipv6 address 203A:88A1:A789:2::1/112
+ ipv6 enable
+!
+interface Ethernet0/2
+ description to_R24
+ ip address 10.10.10.5 255.255.255.252
+ ipv6 address FE80::23 link-local
+ ipv6 address 203A:88A1:A789:2::2:1/112
+ ipv6 enable
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 00071A150754
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 045802150C2E
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

@@ -1,0 +1,176 @@
+Current configuration : 3522 bytes
+!
+! Last configuration change at 21:15:50 MSK Tue Jan 9 2024
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname SW2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$AgFp$3hivstr.visSLT50GgVKB/
+!
+username admin privilege 15 secret 5 $1$EuMt$3YMBia8oEfOIWsMHO67SB.
+no aaa new-model
+clock timezone MSK 3 0
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+ip domain-name Moskow1001.ru
+ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ description to_SW5
+ switchport trunk allowed vlan 20,99
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport mode trunk
+!
+interface Ethernet0/1
+ description to_SW4
+ switchport trunk allowed vlan 20,99
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport mode trunk
+ spanning-tree cost 100
+!
+interface Ethernet0/2
+ description to_VPC7
+ switchport access vlan 20
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0050.7966.6809
+ switchport port-security mac-address sticky 5ac0.8cc2.9484
+ switchport port-security
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Ethernet0/3
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Ethernet1/0
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Ethernet1/1
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Ethernet1/2
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Ethernet1/3
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Vlan99
+ description Mgmt_SW2
+ ip address 192.168.0.132 255.255.255.128
+ ipv6 address FE80::2 link-local
+ ipv6 address 203A:BB8A:D701:D::2/112
+!
+interface Vlan999
+ no ip address
+ shutdown
+!
+ip default-gateway 192.168.0.129
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 0822455D0A16
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 00071A150754
+ logging synchronous
+ login
+!
+!
+end

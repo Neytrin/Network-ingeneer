@@ -1,0 +1,180 @@
+Current configuration : 2850 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R28
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$aizv$GKo66PGWArCu4X9fdWLOj.
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 172.16.30.1
+ip dhcp excluded-address 172.16.31.1
+!
+ip dhcp pool R28_Client30
+ network 172.16.30.0 255.255.255.0
+ domain-name Chokurdak.com
+ default-router 172.16.30.1
+ lease infinite
+!
+ip dhcp pool R28_Client31
+ network 172.16.31.0 255.255.255.0
+ domain-name Chokurdak.com
+ default-router 172.16.31.1
+ lease infinite
+!
+!
+!
+no ip domain lookup
+ip domain name Chokurdak1001.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+ipv6 dhcp pool R28_Stateless
+ dns-server 203A:BB8A:D701:8888::1:1
+ domain-name Chokurdak.com
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$nf9O$PTe3VsyxvpmmELs.Pc2pC0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.0.28 255.255.255.255
+ ipv6 address 203A:BB8A:D701:8888::28/128
+ ipv6 enable
+!
+interface Ethernet0/0
+ description to_Triada26
+ ip address 90.7.18.123 255.255.255.254
+ ipv6 address FE80::28 link-local
+ ipv6 address 203A:88A1:A789:1::1:1/112
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_Triada25
+ ip address 90.7.18.121 255.255.255.254
+ ipv6 address FE80::28 link-local
+ ipv6 address 203A:88A1:A789:1::6:1/112
+ ipv6 enable
+!
+interface Ethernet0/2
+ no ip address
+ ipv6 address FE80::28 link-local
+ ipv6 enable
+!
+interface Ethernet0/2.30
+ description Client30
+ encapsulation dot1Q 30
+ ip address 172.16.30.1 255.255.255.0
+ ipv6 address FE80::28:30 link-local
+ ipv6 address 203A:BB8A:D701:61::1/64
+ ipv6 enable
+ ipv6 nd other-config-flag
+ ipv6 dhcp server R28_Stateless
+!
+interface Ethernet0/2.31
+ description Client31
+ encapsulation dot1Q 31
+ ip address 172.16.31.1 255.255.255.0
+ ipv6 address FE80::28:31 link-local
+ ipv6 address 203A:BB8A:D701:62::1/64
+ ipv6 enable
+ ipv6 nd other-config-flag
+ ipv6 dhcp server R28_Stateless
+!
+interface Ethernet0/2.88
+ description Mgmt_SW29
+ encapsulation dot1Q 88
+ ip address 192.168.0.217 255.255.255.252
+ ipv6 address FE80::28:88 link-local
+ ipv6 address 203A:BB8A:D701:8888::1111:1/112
+ ipv6 enable
+!
+interface Ethernet0/2.999
+ description Native
+ encapsulation dot1Q 999 native
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 00071A150754
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 045802150C2E
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

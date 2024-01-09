@@ -1,0 +1,130 @@
+Current configuration : 2436 bytes
+!
+! Last configuration change at 22:48:03 MSK Tue Jan 9 2024
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname SW29
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$iSGq$ASYMyxqajL4DYaHyjq/X./
+!
+username admin privilege 15 secret 5 $1$bSm5$OTSDHFali57SqdtVYlBCq/
+no aaa new-model
+clock timezone MSK 3 0
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+ip domain-name Chokurdak1001.ru
+ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ switchport access vlan 30
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0050.7966.680b
+ switchport port-security mac-address sticky 924a.189e.6155
+ switchport port-security
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Ethernet0/1
+ switchport access vlan 31
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0050.7966.680c
+ switchport port-security mac-address sticky 722c.5b16.a114
+ switchport port-security
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Ethernet0/2
+ description to_R28
+ switchport trunk allowed vlan 30,31,88
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport mode trunk
+!
+interface Ethernet0/3
+ switchport access vlan 1000
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security
+ shutdown
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Vlan88
+ ip address 192.168.0.218 255.255.255.252
+ ipv6 address 203A:BB8A:D701:8888::1111:2/112
+ ipv6 enable
+!
+ip default-gateway 192.168.0.217
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 1511021F0725
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 02050D480809
+ logging synchronous
+ login
+!
+!
+end
