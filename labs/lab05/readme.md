@@ -1,8 +1,8 @@
 ## Практическое задание №5
-1. Настроить политику маршрутизации для сетей офиса.
-2. Распределить трафик между двумя линками с провайдером.
-3. Настроить отслеживание линка через технологию IP SLA.(только для IPv4)
-4. Настроить для офиса Лабытнанги маршрут по-умолчанию.
+1. [Настроить политику маршрутизации для сетей офиса.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab05/readme.md#1-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-%D0%BF%D0%BE%D0%BB%D0%B8%D1%82%D0%B8%D0%BA%D1%83-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B5%D1%82%D0%B5%D0%B9-%D0%BE%D1%84%D0%B8%D1%81%D0%B0)
+2. [Распределить трафик между двумя линками с провайдером.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab05/readme.md#2-%D1%80%D0%B0%D1%81%D0%BF%D1%80%D0%B5%D0%B4%D0%B5%D0%BB%D0%B8%D1%82%D1%8C-%D1%82%D1%80%D0%B0%D1%84%D0%B8%D0%BA-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-%D0%B4%D0%B2%D1%83%D0%BC%D1%8F-%D0%BB%D0%B8%D0%BD%D0%BA%D0%B0%D0%BC%D0%B8-%D1%81-%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D0%BE%D0%BC)
+3. [Настроить отслеживание линка через технологию IP SLA.(только для IPv4)](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab05/readme.md#3-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-%D0%BE%D1%82%D1%81%D0%BB%D0%B5%D0%B6%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BB%D0%B8%D0%BD%D0%BA%D0%B0-%D1%87%D0%B5%D1%80%D0%B5%D0%B7-%D1%82%D0%B5%D1%85%D0%BD%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%8E-ip-sla%D1%82%D0%BE%D0%BB%D1%8C%D0%BA%D0%BE-%D0%B4%D0%BB%D1%8F-ipv4)
+4. [Настроить для офиса Лабытнанги маршрут по-умолчанию.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab05/readme.md#4-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-%D0%B4%D0%BB%D1%8F-%D0%BE%D1%84%D0%B8%D1%81%D0%B0-%D0%BB%D0%B0%D0%B1%D1%8B%D1%82%D0%BD%D0%B0%D0%BD%D0%B3%D0%B8-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82-%D0%BF%D0%BE-%D1%83%D0%BC%D0%BE%D0%BB%D1%87%D0%B0%D0%BD%D0%B8%D1%8E)
 
 
 ### 1. Настроить политику маршрутизации для сетей офиса.
@@ -199,12 +199,18 @@ route-map Ext_R25 permit 10
 Покажем как это работает на примере VPC30
 При нормальном состоянии сети, оба маршрута в сторону провайдера рабочие, а предпочтительным маршрутом для VPC30 является 
 линк через R26 на основе политики марштутизации.
+
 ![IP SLA norm.png](IP%20SLA%20norm.png)
+
 Имитируем не доступность интерфейса e0/1 R26 его отключением
 и получаем картинку
+
 ![IP SLA Fail.png](IP%20SLA%20Fail.png)
+
 а VPC30 продолжит работу через маршрут по-умолчанию, но только уже через R25
+
 ![IP SLA Fail2.png](IP%20SLA%20Fail2.png)
+
 После восстановления доступности интерфейса e0/1 R26 трафик от VPC30 снова пойдет через R26
 
 
@@ -216,6 +222,6 @@ R27(config)#ipv6
 R27(config)#ipv6 route ::/0 203a:88a1:a789:1::5:2
 R27(config)#do write
 ````
-Настройки оборудования приведены [Здесь]()
+Настройки оборудования приведены [Здесь](https://github.com/Neytrin/Network-ingeneer/tree/main/labs/lab05/Configs)
 
 
