@@ -96,7 +96,7 @@ route-map Ext_R26 permit 10
 В данном примере создается route-map Ext_R26 проверяющая два условия из ранее созданных access-list для IPv4 и IPv6
 и в случае соответствия направлящая пакеты в сторону e0/1 R26
 
-Так-же в качестве примера можно содать для IPv4 и IPv6 два разных route-map
+Так-же в качестве примера можно создать для IPv4 и IPv6 два разных route-map
 ````
 route-map Ext_R25v6 permit 10
  match ipv6 address Ext_net31
