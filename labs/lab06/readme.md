@@ -334,5 +334,5 @@ OI  203A:BB8A:D701:1010::/64 [110/31]
 OI  203A:BB8A:D701:1020::/64 [110/31]
      via FE80::15, Ethernet0/0
 ````
-Настройки оборудование приведены [здесь]()
+Настройки оборудование приведены [здесь](https://github.com/Neytrin/Network-ingeneer/blob/9cd66e11633d272ea44bf2e241d982531b324ee9/labs/lab06/Config)
 

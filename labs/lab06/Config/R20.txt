@@ -1,0 +1,137 @@
+Current configuration : 1626 bytes
+!
+! Last configuration change at 13:55:26 MSK Sun Jan 28 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R20
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$jqsJ$dJNrcZNd4lbJ/aApylomq1
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name Moskow1001.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$8Yyw$ZNIhzkcvZ3X3Y9FFlj3DY0
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.0.20 255.255.255.255
+ ipv6 address 203A:BB8A:D701:8888::20/128
+ ipv6 enable
+!
+interface Ethernet0/0
+ description to_R15
+ ip address 192.168.1.11 255.255.255.254
+ ip ospf 1 area 102
+ ipv6 address FE80::20 link-local
+ ipv6 address 203A:BB8A:D701:7::20:15/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 102
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+router ospfv3 1
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+router ospf 1
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 02050D480809
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 104D000A0618
+ logging synchronous
+ login
+ transport input none
+!
+!
+end
