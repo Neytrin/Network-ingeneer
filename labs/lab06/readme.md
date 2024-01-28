@@ -1,8 +1,8 @@
 ## Практическое задание №6
-1. [Настроить маршрутизаторы R14-R15 в зоне 0 - backbone.]()
-2. [Настроить маршрутизаторы R12-R13 в зоне 10. Дополнительно к маршрутам должны получать маршрут по умолчанию.]()
-3. [Настроить маршрутизатор R19 в зоне 101 и получать только маршрут по умолчанию.]()
-4. [Настроить маршрутизатор R20 в зоне 102 и получать все маршруты, кроме маршрутов до сетей зоны 101.]()
+1. [Настроить маршрутизаторы R14-R15 в зоне 0 - backbone.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab06/readme.md#1-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80%D1%8B-r14-r15-%D0%B2-%D0%B7%D0%BE%D0%BD%D0%B5-0---backbone)
+2. [Настроить маршрутизаторы R12-R13 в зоне 10. Дополнительно к маршрутам должны получать маршрут по умолчанию.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab06/readme.md#2-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D0%BC-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80%D1%8B-r12-r13-%D0%B2-%D0%B7%D0%BE%D0%BD%D0%B5-10-%D0%B4%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE-%D0%BA-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B0%D0%BC-%D0%B4%D0%BE%D0%BB%D0%B6%D0%BD%D1%8B-%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B0%D1%82%D1%8C-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82-%D0%BF%D0%BE-%D1%83%D0%BC%D0%BE%D0%BB%D1%87%D0%B0%D0%BD%D0%B8%D1%8E)
+3. [Настроить маршрутизатор R19 в зоне 101 и получать только маршрут по умолчанию.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab06/readme.md#3-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D0%BC-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80-r19-%D0%B2-%D0%B7%D0%BE%D0%BD%D0%B5-101-%D0%B4%D0%BB%D1%8F-%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%8F-%D1%82%D0%BE%D0%BB%D1%8C%D0%BA%D0%BE-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B0-%D0%BF%D0%BE-%D1%83%D0%BC%D0%BE%D0%BB%D1%87%D0%B0%D0%BD%D0%B8%D1%8E)
+4. [Настроить маршрутизатор R20 в зоне 102 и получать все маршруты, кроме маршрутов до сетей зоны 101.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab06/readme.md#4-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D0%BC-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80-r20-%D0%B2-%D0%B7%D0%BE%D0%BD%D0%B5-102-%D0%B4%D0%BB%D1%8F-%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B2%D1%81%D0%B5%D1%85-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%BE%D0%B2-%D0%BA%D1%80%D0%BE%D0%BC%D0%B5-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%BE%D0%B2-%D0%B4%D0%BE-%D1%81%D0%B5%D1%82%D0%B5%D0%B9-%D0%B7%D0%BE%D0%BD%D1%8B-101)
 
 ### 
 
@@ -106,6 +106,7 @@ sh ip protocols
 
 Выводим содержание базы LSDB.
 ![R14 sh ip ospf database.png](R14%20sh%20ip%20ospf%20database.png)
+
 Из которой видно, что существуют пока только типы LSA тип 1 и 2.
 
 Таблица маршрутизации R14 приобрела вид
