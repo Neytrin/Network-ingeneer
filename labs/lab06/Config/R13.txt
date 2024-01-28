@@ -1,0 +1,153 @@
+Current configuration : 2142 bytes
+!
+! Last configuration change at 14:44:21 MSK Sun Jan 28 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R13
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$Kz0C$IGdv1I6qiYGca/pzG9TSE1
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name Moskow1001.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$UCzy$3.VM7CxR2ILt1pVtHAZRL.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.0.13 255.255.255.255
+ ipv6 address 203A:BB8A:D701:8888::13/128
+ ipv6 enable
+!
+interface Ethernet0/0
+ description to_SW5
+ ip address 192.168.1.16 255.255.255.254
+ ip ospf 1 area 10
+ ipv6 address FE80::13 link-local
+ ipv6 address 203A:BB8A:D701:A::13:5/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 10
+!
+interface Ethernet0/1
+ description to_SW4
+ ip address 192.168.1.18 255.255.255.254
+ ip ospf 1 area 10
+ ipv6 address FE80::13 link-local
+ ipv6 address 203A:BB8A:D701:B::13:4/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 10
+!
+interface Ethernet0/2
+ description to_R15
+ ip address 192.168.1.7 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::13 link-local
+ ipv6 address 203A:BB8A:D701:5::13:15/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 0
+!
+interface Ethernet0/3
+ description to_R14
+ ip address 192.168.1.3 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::13 link-local
+ ipv6 address 203A:BB8A:D701:3::13:14/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 0
+!
+router ospfv3 1
+ area 10 stub
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+router ospf 1
+ area 10 stub
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 060506324F41
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 0822455D0A16
+ logging synchronous
+ login
+ transport input none
+!
+!
