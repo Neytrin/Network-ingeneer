@@ -302,4 +302,4 @@ R23#
 
 ![R23 ping R26.png](R23%20ping%20R26.png)
 
-Все изменения в настройки конфигурации оборудования [здесь]()
+Все изменения в настройки конфигурации оборудования [здесь](https://github.com/Neytrin/Network-ingeneer/blob/bd5cb12344e4b37e53685b7bc7297b7993e83454/labs/lab07/Configs)
