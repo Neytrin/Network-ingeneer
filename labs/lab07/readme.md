@@ -1,9 +1,9 @@
 ## Практическое задание №7
 Настроить IS-IS в ISP Триада.
 
-1. [Настроить маршрутизаторы R23 и R25 в зоне 2222.]()
-2. [Настроить маршрутизатор R24 в зоне 24.]()
-3. [Настроить маршрутизатор R26 в зоне 26.]()
+1. [Настроить маршрутизаторы R23 и R25 в зоне 2222.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab07/readme.md#%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80%D1%8B-r23-%D0%B8-r25-%D0%B2-%D0%B7%D0%BE%D0%BD%D0%B5-2222)
+2. [Настроить маршрутизатор R24 в зоне 24.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab07/readme.md#2-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80-r24-%D0%B2-%D0%B7%D0%BE%D0%BD%D0%B5-24)
+3. [Настроить маршрутизатор R26 в зоне 26.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab07/readme.md#3-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80-r26-%D0%B2-%D0%B7%D0%BE%D0%BD%D0%B5-26)
 
 Настройка осуществляется одновременно для IPv4 и IPv6.
 
