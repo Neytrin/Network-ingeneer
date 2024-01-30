@@ -1,6 +1,6 @@
-Current configuration : 2338 bytes
+Current configuration : 2502 bytes
 !
-! Last configuration change at 14:11:01 MSK Sun Jan 28 2024
+! Last configuration change at 20:53:14 MSK Tue Jan 30 2024
 !
 version 15.4
 service timestamps debug datetime msec
@@ -110,8 +110,13 @@ interface Ethernet0/3
  ospfv3 1 ipv6 area 0
 !
 interface Ethernet1/0
- no ip address
- shutdown
+ description to_R13
+ ip address 192.168.1.24 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::12 link-local
+ ipv6 address 203A:BB8A:D701:E::12:13/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 0
 !
 interface Ethernet1/1
  no ip address

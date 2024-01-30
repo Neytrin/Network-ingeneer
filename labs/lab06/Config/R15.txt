@@ -1,6 +1,6 @@
-Current configuration : 2423 bytes
+Current configuration : 2797 bytes
 !
-! Last configuration change at 14:06:25 MSK Sun Jan 28 2024
+! Last configuration change at 20:52:01 MSK Tue Jan 30 2024
 !
 version 15.4
 service timestamps debug datetime msec
@@ -80,7 +80,7 @@ interface Ethernet0/0
  ipv6 address FE80::15 link-local
  ipv6 address 203A:BB8A:D701:5::15:13/64
  ipv6 enable
- ospfv3 1 ipv6 area 0
+ ipv6 ospf 1 area 0
 !
 interface Ethernet0/1
  description to_R12
@@ -89,7 +89,7 @@ interface Ethernet0/1
  ipv6 address FE80::15 link-local
  ipv6 address 203A:BB8A:D701:6::15:12/64
  ipv6 enable
- ospfv3 1 ipv6 area 0
+ ipv6 ospf 1 area 0
 !
 interface Ethernet0/2
  description to_Lamas
@@ -106,12 +106,28 @@ interface Ethernet0/3
  ipv6 address FE80::15 link-local
  ipv6 address 203A:BB8A:D701:7::15:20/64
  ipv6 enable
- ospfv3 1 ipv6 area 102
+ ipv6 ospf 1 area 102
 !
-router ospfv3 1
- !
- address-family ipv6 unicast
- exit-address-family
+interface Ethernet1/0
+ description to_R14
+ ip address 192.168.1.23 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::15 link-local
+ ipv6 address 203A:BB8A:D701:D::15:14/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
 !
 router ospf 1
  area 102 filter-list prefix Deny_Area101 in
@@ -127,6 +143,10 @@ ip route 0.0.0.0 0.0.0.0 Null0
 !
 ip prefix-list Deny_Area101 seq 5 deny 192.168.1.4/31
 ip prefix-list Deny_Area101 seq 10 permit 0.0.0.0/0 le 32
+ipv6 router ospf 1
+ area 102 filter-list prefix Deny_101 in
+ default-information originate
+!
 !
 !
 ipv6 prefix-list Deny_101 seq 5 deny 203A:BB8A:D701:4::/64

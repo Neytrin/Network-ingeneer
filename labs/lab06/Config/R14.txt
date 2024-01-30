@@ -1,6 +1,6 @@
-Current configuration : 2199 bytes
+Current configuration : 2559 bytes
 !
-! Last configuration change at 13:56:31 MSK Sun Jan 28 2024
+! Last configuration change at 18:38:15 MSK Tue Jan 30 2024
 !
 version 15.4
 service timestamps debug datetime msec
@@ -107,6 +107,27 @@ interface Ethernet0/3
  ipv6 address 203A:BB8A:D701:4::14:19/64
  ipv6 enable
  ospfv3 1 ipv6 area 101
+!
+interface Ethernet1/0
+ description to_R15
+ ip address 192.168.1.22 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::14 link-local
+ ipv6 address 203A:BB8A:D701:D::14:15/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 0
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
 !
 router ospfv3 1
  area 101 stub no-summary
