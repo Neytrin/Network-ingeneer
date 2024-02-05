@@ -1,0 +1,256 @@
+Current configuration : 4653 bytes
+!
+! Last configuration change at 13:38:29 MSK Mon Feb 5 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R16
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$o.MW$fLaA4EL9W/.UKq3bHeYVy0
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 172.18.1.1 172.18.1.4
+ip dhcp excluded-address 172.18.2.1 172.18.2.4
+!
+ip dhcp pool NET_101
+ network 172.18.1.0 255.255.255.0
+ domain-name SPetrburg.com
+ default-router 172.18.1.1
+ lease 2
+!
+ip dhcp pool NET_102
+ network 172.18.2.0 255.255.255.0
+ domain-name SPeterburg.com
+ default-router 172.18.2.1
+ lease 2
+!
+!
+!
+no ip domain lookup
+ip domain name SPeterburg2042.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+key chain EIGRP
+ key 1
+  key-string 7 072C285F4D0659
+  cryptographic-algorithm hmac-sha-256
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$b5W8$sXeqiVKMdstKgPpwV2dZN1
+!
+redundancy
+!
+!
+track 1 interface Ethernet0/1 line-protocol
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.23.13.16 255.255.255.255
+ ipv6 address 203A:34:701:8888::16/128
+ ipv6 enable
+!
+interface Ethernet0/0
+ no ip address
+!
+interface Ethernet0/0.102
+ description Client10
+ encapsulation dot1Q 102
+ ip address 172.18.2.2 255.255.255.0
+ standby version 2
+ standby 2 ip 172.18.2.1
+ standby 2 timers 1 5
+ standby 2 priority 150
+ standby 2 preempt
+ standby 2 name Client10v4
+ standby 2 track 1 shutdown
+ standby 4 ipv6 FE80::17:4
+ standby 4 ipv6 203A:34:701:102::1/64
+ standby 4 timers 1 5
+ standby 4 priority 150
+ standby 4 preempt
+ standby 4 name Client10v6
+ standby 4 track 1 shutdown
+ ipv6 address FE80::16:102 link-local
+ ipv6 address 203A:34:701:102::3/64
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_R18
+ ip address 172.18.13.6 255.255.255.252
+ ipv6 address FE80::16 link-local
+ ipv6 address 203A:34:701::1:16:18/96
+ ipv6 enable
+!
+interface Ethernet0/2
+ no ip address
+!
+interface Ethernet0/2.101
+ encapsulation dot1Q 101
+ ip address 172.18.1.2 255.255.255.0
+ standby version 2
+ standby 1 ip 172.18.1.1
+ standby 1 timers 1 5
+ standby 1 preempt
+ standby 1 name Client9v4
+ standby 1 track 1 shutdown
+ standby 3 ipv6 FE80::17:3
+ standby 3 ipv6 203A:34:701:101::1/64
+ standby 3 timers 1 5
+ standby 3 preempt
+ standby 3 name Client9V6
+ standby 3 track 1 shutdown
+ ipv6 address FE80::16:101 link-local
+ ipv6 address 203A:34:701:101::3/64
+ ipv6 enable
+!
+interface Ethernet0/3
+ description to_R32
+ ip address 172.18.13.9 255.255.255.252
+ ipv6 address FE80::16 link-local
+ ipv6 address 203A:34:701::3:16:32/96
+ ipv6 enable
+!
+!
+router eigrp SPB
+ !
+ address-family ipv4 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/1
+   summary-address 172.16.0.0 255.248.0.0
+   authentication mode hmac-sha-256 7 01100F175804
+   authentication key-chain EIGRP
+  exit-af-interface
+  !
+  af-interface Ethernet0/3
+   authentication mode hmac-sha-256 7 121A0C041104
+   authentication key-chain EIGRP
+  exit-af-interface
+  !
+  af-interface Ethernet0/0.102
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/2.101
+   passive-interface
+  exit-af-interface
+  !
+  topology base
+   distribute-list prefix DEFv4_R32 out Ethernet0/3
+  exit-af-topology
+  network 172.18.0.0 0.0.3.255
+  network 172.18.13.4 0.0.0.3
+  network 172.18.13.8 0.0.0.3
+  network 172.23.13.16 0.0.0.0
+  eigrp router-id 172.23.13.16
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/1
+   summary-address 203A:34:701::/48
+   authentication mode hmac-sha-256 7 13061E010803
+   authentication key-chain EIGRP
+  exit-af-interface
+  !
+  af-interface Ethernet0/3
+   authentication mode hmac-sha-256 7 045802150C2E
+   authentication key-chain EIGRP
+  exit-af-interface
+  !
+  af-interface Ethernet0/0.102
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/2.101
+   passive-interface
+  exit-af-interface
+  !
+  topology base
+   distribute-list prefix-list DEFv6_R32 out Ethernet0/3
+  exit-af-topology
+  eigrp router-id 172.23.13.16
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+ip prefix-list DEFv4_R32 seq 5 permit 0.0.0.0/0
+!
+!
+ipv6 prefix-list DEFv6_R32 seq 5 permit ::/0
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 01100F175804
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 121A0C041104
+ logging synchronous
+ login
+ transport input none
+!
+!
+end
