@@ -1,8 +1,8 @@
 ## Практическое задание №8
 
-1. [Настроить EIGRP в офисе С.-Петербург.]()
-2. [Настроить R32 для получения только маршрута по умолчанию.]()
-3. [Настроить R16-17 для анонсирования только суммарных префиксов.]()
+1. [Настроить EIGRP в офисе С.-Петербург.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab08/readme.md#1-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D0%BC-eigrp-%D0%B2-%D0%BE%D1%84%D0%B8%D1%81%D0%B5-%D1%81-%D0%BF%D0%B5%D1%82%D0%B5%D1%80%D0%B1%D1%83%D1%80%D0%B3)
+2. [Настроить R32 для получения только маршрута по умолчанию.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab08/readme.md#2-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-%D1%81%D0%B5%D1%82%D1%8C-%D1%82%D0%B0%D0%BA-%D1%87%D1%82%D0%BE-%D0%B1%D1%8B-r32-%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B0%D0%BB-%D1%82%D0%BE%D0%BB%D1%8C%D0%BA%D0%BE-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82-%D0%BF%D0%BE-%D1%83%D0%BC%D0%BE%D0%BB%D1%87%D0%B0%D0%BD%D0%B8%D1%8E)
+3. [Настроить R16-17 для анонсирования только суммарных префиксов.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab08/readme.md#3-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D0%BC-r16-17-%D0%B4%D0%BB%D1%8F-%D0%B0%D0%BD%D0%BE%D0%BD%D1%81%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-%D1%82%D0%BE%D0%BB%D1%8C%D0%BA%D0%BE-%D1%81%D1%83%D0%BC%D0%BC%D0%B0%D1%80%D0%BD%D1%8B%D1%85-%D0%BF%D1%80%D0%B5%D1%84%D0%B8%D0%BA%D1%81%D0%BE%D0%B2)
 
 Использовать EIGRP named-mode для настройки сети.
 Настройка осуществляется одновременно для IPv4 и IPv6.
