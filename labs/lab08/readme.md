@@ -239,7 +239,7 @@ R17(config-router-af-interface)#summary-address 203A:34:701::/48
 ````
 Проверку производим на R18
 
-![R18_ip_rout_summ.png](R18_ip_rout_summ.png)
+
 
 Настройки конфигурации маршрутизаторов приведены [здесь](https://github.com/Neytrin/Network-ingeneer/blob/aea4e77db7f7f2a4b0560f2400a9caa04a69f54b/labs/lab08/Configs)
 
