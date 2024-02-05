@@ -202,9 +202,9 @@ R18(config)#ipv6 route ::/0 Null0
 
 ![R17_ipv4_route_stat.png](R17_ipv4_route_stat.png)
   
-и для IPv6    
-![R17_ipv6_route_stat.png](R17_ipv6_route_stat.png)
+и для IPv6 
 
+![R17_ipv6_route_stat.png](R17_ipv6_route_stat.png)
 
 ### 2. Настроить сеть так, что-бы R32 получал только маршрут по умолчанию.
 
@@ -234,7 +234,7 @@ R16(config-router-af-topology)#distribute-list prefix-list DEFv6_R32 out e0/3
 для интерфейсов e0/1 R16 и R17.
 Задаем команды на примере R17
 ````
-R17(config-router-af-interface)#summary-address 172.16.0.0 255.240.0.0
+R17(config-router-af-interface)#summary-address 172.16.0.0 255.248.0.0
 R17(config-router-af-interface)#summary-address 203A:34:701::/48
 ````
 Проверку производим на R18
