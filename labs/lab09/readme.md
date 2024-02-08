@@ -1,10 +1,10 @@
 ## Практическое задание №9
 
-1. [Настроить eBGP между офисом Москва и двумя провайдерами - Киторн и Ламас.]()
-2. [Настроить eBGP между провайдерами Киторн и Ламас.]()
-3. [Настроить eBGP между Ламас и Триада.]()
-4. [Настроить eBGP между офисом С.-Петербург и провайдером Триада.]()
-5. [Организовать IP доступность между пограничным роутерами офисов Москва и С.-Петербург.]()
+1. [Настроить eBGP между офисом Москва и двумя провайдерами - Киторн и Ламас.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab09/readme.md#1-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-ebgp-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-%D0%BE%D1%84%D0%B8%D1%81%D0%BE%D0%BC-%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B0-%D0%B8-%D0%B4%D0%B2%D1%83%D0%BC%D1%8F-%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D0%B0%D0%BC%D0%B8---%D0%BA%D0%B8%D1%82%D0%BE%D1%80%D0%BD-%D0%B8-%D0%BB%D0%B0%D0%BC%D0%B0%D1%81)
+2. [Настроить eBGP между провайдерами Киторн и Ламас.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab09/readme.md#2-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-ebgp-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D0%B0%D0%BC%D0%B8-%D0%BA%D0%B8%D1%82%D0%BE%D1%80%D0%BD-%D0%B8-%D0%BB%D0%B0%D0%BC%D0%B0%D1%81)
+3. [Настроить eBGP между Ламас и Триада.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab09/readme.md#3-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-ebgp-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-%D0%BB%D0%B0%D0%BC%D0%B0%D1%81-%D0%B8-%D1%82%D1%80%D0%B8%D0%B0%D0%B4%D0%B0)
+4. [Настроить eBGP между офисом С.-Петербург и провайдером Триада.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab09/readme.md#4-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-ebgp-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-%D0%BE%D1%84%D0%B8%D1%81%D0%BE%D0%BC-%D1%81-%D0%BF%D0%B5%D1%82%D0%B5%D1%80%D0%B1%D1%83%D1%80%D0%B3-%D0%B8-%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D0%BE%D0%BC-%D1%82%D1%80%D0%B8%D0%B0%D0%B4%D0%B0)
+5. [Организовать IP доступность между пограничным роутерами офисов Москва и С.-Петербург.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab09/readme.md#5-%D0%BE%D1%80%D0%B3%D0%B0%D0%BD%D0%B8%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D1%8C-ip-%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%BD%D0%BE%D1%81%D1%82%D1%8C-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-%D0%BF%D0%BE%D0%B3%D1%80%D0%B0%D0%BD%D0%B8%D1%87%D0%BD%D1%8B%D0%BC-%D1%80%D0%BE%D1%83%D1%82%D0%B5%D1%80%D0%B0%D0%BC%D0%B8-%D0%BE%D1%84%D0%B8%D1%81%D0%BE%D0%B2-%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B0-%D0%B8-%D1%81-%D0%BF%D0%B5%D1%82%D0%B5%D1%80%D0%B1%D1%83%D1%80%D0%B3)
 
 
 Представленная схема лабораторного стенда притерпела изменения в результате выполнения условия 
@@ -279,4 +279,4 @@ R15(config-if)#ip ospf 1 area 0
 
 ![R18 ping R14&R15 ipv6.png](R18%20ping%20R14%26R15%20ipv6.png)
 
-Все изменения в настройках оборудования приведены [здесь]()
+Все изменения в настройках оборудования приведены [здесь](https://github.com/Neytrin/Network-ingeneer/tree/main/labs/lab09/Configs)
