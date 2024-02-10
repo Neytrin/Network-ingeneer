@@ -21,22 +21,30 @@ R14 и R15. Но это не надежно, по причине если про
 Видно, что получены маршруты по iBGP (internal), все они valid, а лучшим выбран прямой маршрут R14-R15.
 
 Но есть более элегантное решение.
+В качестве интерфейсов для установления соседства по BGP использовать TCP сессию установленную между интерфейсами Loopback0
+роутеров R14 и R15. Виртуальный сетевой интерфейс будет доступен всегда, а надежность связанности между Loopback интерфейсами 
+R14 и R15 обеспечивается избыточностью связей Backbone area OSPF.
 
+Запускаем процесс OSPF на интерфейсах Loopbak0 R14, R15.
+````
+R14(config)#int loopback 0
+R14(config-if)#ip ospf 1 area 0
+````
+Теперь настраиваем процесс iBGP на роутерах.
+````
+R14(config)#router bgp 1001
+R14(config-router)#neighbor 192.168.0.15 remote-as 1001
+R14(config-router)#neighbor 192.168.0.15 update-source loopback 0
+R14(config-router)#address-family ipv4
+R14(config-router-af)#neighbor 192.168.0.15 next-hop-self
+````
+Меньше соседей и меньше записей маршрутов в базе BGP.  
 
+![R14 sh_ip_bgp_sum_lo0.png](R14%20sh_ip_bgp_sum_lo0.png)
 
+![R14 sh_ip_bgp_lo0.png](R14%20sh_ip_bgp_lo0.png)
 
-
-
-
-
-
-
-
-
-
-
-
-
+Маршруты получены, а в качестве Next Hop указан Ip address Loopback0 R15.
 
 
 
