@@ -25,18 +25,22 @@ R14 и R15. Но это не надежно, по причине если про
 роутеров R14 и R15. Виртуальный сетевой интерфейс будет доступен всегда, а надежность связанности между Loopback интерфейсами 
 R14 и R15 обеспечивается избыточностью связей Backbone area OSPF.
 
-Запускаем процесс OSPF на интерфейсах Loopbak0 R14, R15.
+Запускаем процесс OSPF на интерфейсах Loopbak0 R14, R15. Покажем на примере R14.
 ````
 R14(config)#int loopback 0
 R14(config-if)#ip ospf 1 area 0
 ````
-Теперь настраиваем процесс iBGP на роутерах.
+Теперь настраиваем процесс iBGP на роутерах одновременно для IPv4 и IPv6.
 ````
 R14(config)#router bgp 1001
 R14(config-router)#neighbor 192.168.0.15 remote-as 1001
 R14(config-router)#neighbor 192.168.0.15 update-source loopback 0
+R14(config-router)#neighbor 203a:bb8a:d701:8888::15 remote-as 1001
 R14(config-router)#address-family ipv4
 R14(config-router-af)#neighbor 192.168.0.15 next-hop-self
+R14(config-router-af)#address-family ipv6
+R14(config-router-af)#neighbor 203a:bb8a:d701:8888::15 activate
+R14(config-router-af)#neighbor 203a:bb8a:d701:8888::15 next-hop-self
 ````
 Меньше соседей и меньше записей маршрутов в базе BGP.  
 
@@ -44,7 +48,16 @@ R14(config-router-af)#neighbor 192.168.0.15 next-hop-self
 
 ![R14 sh_ip_bgp_lo0.png](R14%20sh_ip_bgp_lo0.png)
 
-Маршруты получены, а в качестве Next Hop указан Ip address Loopback0 R15.
+Маршрутная информация получена, а в качестве Next Hop указан IPv4 адрес Loopback0 R15.
+
+### 2. Настроить iBGP в провайдере Триада, с использованием RR.
+
+Для начала настроим eBGP между Киторн и Триада, которую не учли в предыдущей работе.
+
+
+
+
+
 
 
 
