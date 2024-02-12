@@ -372,8 +372,52 @@ cо стороны R18.
 
 Для начала отобразим маршрутную информацию полученную по eBGP от соседей на R14 и R15.
 
+![R14 sh_ip_bgp best Kitorn.png](R14%20sh_ip_bgp%20best%20Kitorn.png)
+![R15 sh_ip_bgp to Kitorn.png](R15%20sh_ip_bgp%20to%20Kitorn.png)
 
+Выделены те маршруты в AS101, которые роутеры посчитали лучшими. Наша задача, что-бы все маршруты при нормальной работе сети были
+направлены в сторону AS301 ISP Ламас.
 
+Попробуем изменить атребут Local Preference для управления трафиком.
+````
+R15(config)#route-map Local-Pref permit 10
+R15(config-route-map)#set local-preference 1000
+
+R15(config)#router bgp 1001
+R15(config-router)#address-family ipv4
+R15(config-router-af)#neighbor 77.100.10.40 route-map Local-Pref out
+````
+Действительно, предпочтительными маршрутами на внешние сети стали маршруты в сторону AS301
+
+![R15 sh_ip_bgp to Lamas.png](R15%20sh_ip_bgp%20to%20Lamas.png)
+
+и на R14 в т.ч.
+
+![R14 sh_ip_bgp to Lamas.png](R14%20sh_ip_bgp%20to%20Lamas.png)
+
+Условие выполнено
+
+Посмотрим что будет, если отключится R21 AS301, на примере R15.
+
+![R15 sh_ip_bgp fail_R21.png](R15%20sh_ip_bgp%20fail_R21.png)
+
+Доступны все маршруты на внешние сети через AS101, кроме сети анонсируемой из AS301.
+
+На примере R14 продемонстрируем работу с атрибутом AS-Path, c целью отсечения входящего трафика со стороны R22 AS301 Киторн.
+
+![R22 before prepend.png](R22%20before%20prepend.png)
+
+````
+R14(config)#route-map AS_PATH_PREP permit 10
+R14(config-route-map)#set as-path prepend 1001 1001 1001
+R14(config)#router bgp 1001
+R14(config-router)#address-family ipv4
+R14(config-router-af)#neighbor 33.13.8.20 route-map AS_PATH_PREP out
+````
+
+![R22 after prepend.png](R22%20after%20prepend.png)
+
+Теперь все выбранные лучшими маршруты попадают 
 
 ### 4. Настроить сеть офиса С.-Петербург так, чтобы трафик до любого офиса распределялся по двум линкам одновременно.
 
