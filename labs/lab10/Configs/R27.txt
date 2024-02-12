@@ -1,0 +1,130 @@
+Current configuration : 1557 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R27
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$u0Nz$wb.m58UsLlw1n9qEGbnmY/
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name Labutnangi1001.ru
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$N0kK$NrRngyeHH62GvzFG7adKu/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.0.27 255.255.255.255
+ ipv6 address 203A:BB8A:D701:8888::27/128
+ ipv6 enable
+!
+interface Loopback1
+ ip address 90.7.18.1 255.255.255.255
+!
+interface Ethernet0/0
+ description to_Triada25
+ ip address 90.7.18.101 255.255.255.254
+ ipv6 address FE80::27 link-local
+ ipv6 address 203A:88A1:A789:1::5:1/112
+ ipv6 enable
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 90.7.18.100
+!
+ipv6 route ::/0 203A:88A1:A789:1::5:2
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 104D000A0618
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 00071A150754
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

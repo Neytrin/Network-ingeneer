@@ -1,0 +1,218 @@
+Current configuration : 3927 bytes
+!
+! Last configuration change at 22:31:04 MSK Mon Feb 12 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R15
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$2UnB$e.sAmA5RTMK1a61X1dL860
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name Moskow1001.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$jxi0$c4mvkX.GHBy9PenmaSa6A.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.0.15 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address 203A:BB8A:D701:8888::15/128
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface Loopback1
+ ip address 98.10.10.1 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Ethernet0/0
+ description to_R13
+ ip address 192.168.1.6 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::15 link-local
+ ipv6 address 203A:BB8A:D701:5::15:13/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface Ethernet0/1
+ description to_R12
+ ip address 192.168.1.8 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::15 link-local
+ ipv6 address 203A:BB8A:D701:6::15:12/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface Ethernet0/2
+ description to_Lamas
+ ip address 77.100.10.41 255.255.255.254
+ ipv6 address FE80::15 link-local
+ ipv6 address 203A:BB8A:D701:1::2/64
+ ipv6 enable
+ no cdp enable
+!
+interface Ethernet0/3
+ description to_R20
+ ip address 192.168.1.10 255.255.255.254
+ ip ospf 1 area 102
+ ipv6 address FE80::15 link-local
+ ipv6 address 203A:BB8A:D701:7::15:20/64
+ ipv6 enable
+ ipv6 ospf 1 area 102
+!
+interface Ethernet1/0
+ description to_R14
+ ip address 192.168.1.23 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::15 link-local
+ ipv6 address 203A:BB8A:D701:D::15:14/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router ospf 1
+ area 102 filter-list prefix Deny_Area101 in
+ default-information originate
+!
+router bgp 1001
+ bgp router-id 15.15.15.15
+ bgp log-neighbor-changes
+ neighbor 203A:BB8A:D701:1::1 remote-as 301
+ neighbor 203A:BB8A:D701:8888::14 remote-as 1001
+ neighbor 77.100.10.40 remote-as 301
+ neighbor 192.168.0.14 remote-as 1001
+ neighbor 192.168.0.14 update-source Loopback0
+ !
+ address-family ipv4
+  network 98.10.10.0 mask 255.255.255.0
+  no neighbor 203A:BB8A:D701:1::1 activate
+  no neighbor 203A:BB8A:D701:8888::14 activate
+  neighbor 77.100.10.40 activate
+  neighbor 77.100.10.40 route-map Local-Pref in
+  neighbor 192.168.0.14 activate
+  neighbor 192.168.0.14 next-hop-self
+ exit-address-family
+ !
+ address-family ipv6
+  network 203A:BB8A:D701::/48
+  neighbor 203A:BB8A:D701:1::1 activate
+  neighbor 203A:BB8A:D701:1::1 route-map Local-Pref in
+  neighbor 203A:BB8A:D701:8888::14 activate
+  neighbor 203A:BB8A:D701:8888::14 next-hop-self
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 Null0
+ip route 98.10.10.0 255.255.255.0 Null0
+!
+!
+ip prefix-list Deny_Area101 seq 5 deny 192.168.1.4/31
+ip prefix-list Deny_Area101 seq 10 permit 0.0.0.0/0 le 32
+ipv6 route 203A:BB8A:D701::/48 Null0
+ipv6 router ospf 1
+ area 102 filter-list prefix Deny_101 in
+ default-information originate
+!
+!
+!
+ipv6 prefix-list Deny_101 seq 5 deny 203A:BB8A:D701:4::/64
+ipv6 prefix-list Deny_101 seq 10 permit ::/0 le 128
+route-map Local-Pref permit 10
+ set local-preference 1000
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 13061E010803
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 13061E010803
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

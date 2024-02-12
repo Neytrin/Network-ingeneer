@@ -1,0 +1,168 @@
+Current configuration : 2760 bytes
+!
+! Last configuration change at 14:15:50 MSK Mon Feb 12 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R22
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$/kGC$tmH7wAmP8zU.StOYFY1ek0
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name Kitorn101.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$Mm8l$wYPhYqXWXbq442dP5d6Ju/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.1.22 255.255.255.255
+ ipv6 address 203A:A87A:413:8888::22/128
+ ipv6 enable
+!
+interface Loopback1
+ ip address 33.13.7.1 255.255.255.255
+!
+interface Ethernet0/0
+ description to_Moskow
+ ip address 33.13.8.20 255.255.255.254
+ ipv6 address FE80::22 link-local
+ ipv6 address 203A:BB8A:D701::1/64
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_Lamas
+ ip address 33.13.7.60 255.255.255.254
+ ipv6 address FE80::22 link-local
+ ipv6 address 203A:A87A:413:7000::1/112
+ ipv6 enable
+!
+interface Ethernet0/2
+ description to_Triada
+ ip address 90.7.17.11 255.255.255.254
+ ipv6 address FE80::22 link-local
+ ipv6 address 203A:88A1:A789:1::1:1/112
+ ipv6 enable
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+router bgp 101
+ bgp router-id 22.22.22.22
+ bgp log-neighbor-changes
+ neighbor 203A:88A1:A789:1::1:2 remote-as 520
+ neighbor 203A:A87A:413:7000::2 remote-as 301
+ neighbor 203A:BB8A:D701::2 remote-as 1001
+ neighbor 33.13.7.61 remote-as 301
+ neighbor 33.13.8.21 remote-as 1001
+ neighbor 90.7.17.10 remote-as 520
+ !
+ address-family ipv4
+  network 33.13.7.0 mask 255.255.255.0
+  network 33.13.8.0 mask 255.255.255.0
+  no neighbor 203A:88A1:A789:1::1:2 activate
+  no neighbor 203A:A87A:413:7000::2 activate
+  no neighbor 203A:BB8A:D701::2 activate
+  neighbor 33.13.7.61 activate
+  neighbor 33.13.8.21 activate
+  neighbor 90.7.17.10 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network 203A:A87A:413::/48
+  neighbor 203A:88A1:A789:1::1:2 activate
+  neighbor 203A:A87A:413:7000::2 activate
+  neighbor 203A:BB8A:D701::2 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 33.13.7.0 255.255.255.0 Null0
+ip route 33.13.8.0 255.255.255.0 Null0
+!
+ipv6 route 203A:A87A:413::/48 Null0
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 045802150C2E
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 13061E010803
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

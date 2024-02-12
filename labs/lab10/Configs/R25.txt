@@ -1,0 +1,178 @@
+Current configuration : 3227 bytes
+!
+! Last configuration change at 13:45:15 MSK Sun Feb 11 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R25
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$O88i$VbsNgO4h8.zB3GfivsRqK0
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name Triada520.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$RNU9$2DEDHMrUz0XBm9H6MiC2c/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.1.25 255.255.255.255
+ ipv6 address 203A:88A1:A789:8888::25/128
+ ipv6 enable
+!
+interface Ethernet0/0
+ description to_R23
+ ip address 10.10.10.2 255.255.255.252
+ ip router isis Area2222
+ ipv6 address FE80::25 link-local
+ ipv6 address 203A:88A1:A789:2::2/112
+ ipv6 enable
+ ipv6 router isis Area2222
+!
+interface Ethernet0/1
+ description to_Labutnangi
+ ip address 90.7.18.100 255.255.255.254
+ ipv6 address FE80::25 link-local
+ ipv6 address 203A:88A1:A789:1::5:2/112
+ ipv6 enable
+!
+interface Ethernet0/2
+ description to_R26
+ ip address 10.10.10.14 255.255.255.252
+ ip router isis Area2222
+ ipv6 address FE80::25 link-local
+ ipv6 address 203A:88A1:A789:2::4:2/112
+ ipv6 enable
+ ipv6 router isis Area2222
+!
+interface Ethernet0/3
+ description to_Chokurdak
+ ip address 90.7.18.120 255.255.255.254
+ ipv6 address FE80::25 link-local
+ ipv6 address 203A:88A1:A789:1::6:2/112
+ ipv6 enable
+!
+router isis Area2222
+ net 49.2222.0100.0100.1025.00
+ redistribute static ip
+ passive-interface Ethernet0/1
+ passive-interface Ethernet0/3
+ passive-interface Loopback0
+!
+router bgp 520
+ bgp log-neighbor-changes
+ neighbor 10.1.1.24 remote-as 520
+ neighbor 10.1.1.24 update-source Loopback0
+ neighbor 10.1.1.26 remote-as 520
+ neighbor 10.1.1.26 update-source Loopback0
+ neighbor 203A:88A1:A789:8888::24 remote-as 520
+ neighbor 203A:88A1:A789:8888::24 update-source Loopback0
+ neighbor 203A:88A1:A789:8888::26 remote-as 520
+ neighbor 203A:88A1:A789:8888::26 update-source Loopback0
+ !
+ address-family ipv4
+  neighbor 10.1.1.24 activate
+  neighbor 10.1.1.26 activate
+  no neighbor 203A:88A1:A789:8888::24 activate
+  no neighbor 203A:88A1:A789:8888::26 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor 203A:88A1:A789:8888::24 activate
+  neighbor 203A:88A1:A789:8888::26 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 8.8.8.8 255.255.255.252 10.10.10.13
+ip route 90.7.18.1 255.255.255.255 90.7.18.101
+ip route 98.10.10.4 255.255.255.252 90.7.18.121
+ip route 172.16.30.0 255.255.255.0 90.7.18.121
+ip route 172.16.31.0 255.255.255.0 90.7.18.121
+!
+ipv6 route 203A:BB8A:D701:61::/64 203A:88A1:A789:1::6:1
+ipv6 route 203A:BB8A:D701:62::/64 203A:88A1:A789:1::6:1
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 104D000A0618
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 13061E010803
+ logging synchronous
+ login
+ transport input none
+!
+!
+end
