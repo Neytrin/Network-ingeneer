@@ -432,4 +432,4 @@ R14(config-router-af)#neighbor 33.13.8.20 route-map AS_PATH_PREP out
 Видно, что в таблицу маршрутизации добавились дополнительные маршруты на внешние сети принятые по eBGP, а не только те,
 что были выбраны лучшими. 
 
-Все изменения в настройках оборудования приведены [здесь](https://github.com/Neytrin/Network-ingeneer/blob/ee03ca7a50369b271383f09e105bca279f9afbee/labs/lab10/Configs)
+Все изменения в настройках оборудования приведены [здесь](https://github.com/Neytrin/Network-ingeneer/blob/911482025fabc788fb918b0899bdeaea7789ad79/labs/lab10/Configs)
