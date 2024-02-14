@@ -178,7 +178,8 @@ R14(config)#route-map BGP_no_transit
 R14(config-route-map)#match as-path 1
 
 R14(config)#ip as-path access-list 1 permit ^$
-
+R14(config)#router bgp 1001
+R14(config-router)#address-family ipv4
 R14(config-router-af)# neighbor 33.13.8.20 route-map BGP_no_transit out
 ````
  и на R15 c помощью Filter list
@@ -189,7 +190,7 @@ R15(config)#router bgp 1001
 R15(config-router)#address-family ipv4
 R15(config-router-af)# neighbor 192.168.0.14 filter-list 1 out
 ````
-
+Таким образом применяем фильтрацию по iBGP между R14 и R15 отсекая маршруты анонсированные вне AS1001.
 
 
 
