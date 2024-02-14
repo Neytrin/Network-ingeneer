@@ -169,6 +169,28 @@
 R22(AS101) и R23(AS520). Отключим интерфейсы e0/1 и e0/2 R22.
 Покажем на примере R22, что все доступные маршруты BGP на другие AS получены через AS1001
 
+![R22 sh_ip_bgp before.png](R22%20sh_ip_bgp%20before.png)
+
+Выполняем настройку фильтрации маршрутов BGP на R14 c использованием Route-map.
+
+````
+R14(config)#route-map BGP_no_transit
+R14(config-route-map)#match as-path 1
+
+R14(config)#ip as-path access-list 1 permit ^$
+
+R14(config-router-af)# neighbor 33.13.8.20 route-map BGP_no_transit out
+````
+ и на R15 c помощью Filter list
+
+````
+R15(config)#ip as-path access-list 1 permit ^$
+R15(config)#router bgp 1001
+R15(config-router)#address-family ipv4
+R15(config-router-af)# neighbor 192.168.0.14 filter-list 1 out
+````
+
+
 
 
 
