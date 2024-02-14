@@ -181,6 +181,10 @@ R14(config)#ip as-path access-list 1 permit ^$
 R14(config)#router bgp 1001
 R14(config-router)#address-family ipv4
 R14(config-router-af)# neighbor 33.13.8.20 route-map BGP_no_transit out
+
+R14(config-router)#address-family ipv6
+R14(config-router-af)#neighbor 203A:BB8A:D701:8888::15 route-map BGP_no_transit out
+
 ````
  и на R15 c помощью Filter list
 
@@ -189,29 +193,46 @@ R15(config)#ip as-path access-list 1 permit ^$
 R15(config)#router bgp 1001
 R15(config-router)#address-family ipv4
 R15(config-router-af)# neighbor 192.168.0.14 filter-list 1 out
+
+R15(config-router)#address-family ipv6
+R15(config-router-af)#neighbor 203A:BB8A:D701:8888::14 filter-list 1 out
 ````
-Таким образом применяем фильтрацию по iBGP между R14 и R15 отсекая маршруты анонсированные вне AS1001.
+Таким образом применяем фильтрацию по AS-path на iBGP между R14 и R15 отсекая префиксы анонсированные вне AS1001.
 
+Проверяем на R22, что отсутствуют IPv4 маршруты BGP полученные транзитом через AS1001.
 
+![R22 sh_ip_bfp after.png](R22%20sh_ip_bfp%20after.png)
 
+Остались только собственные сети анонсированные внутри собственной AS101 и префикс анонсированный в AS1001. 
 
+Ну и для R21 база маршрутов BGP так-же не содержит маршруты из AS101.
+
+![R21 sh_ip_bgp after.png](R21%20sh_ip_bgp%20after.png)
 
 ### 2. Настроить фильтрацию в офисе С.-Петербург так, чтобы не появилось транзитного трафика(Prefix-list).
 
+Для наглядности создадим условия возникновения транзитного трафика через AS2042. Как отображено на схеме, стрелками
+покажем возможное распространение рафика с учетом, что в AS1001 уже выполнена фильтрация маршрутного трафика.
 
+![Transit R18 shem.png](Transit%20R18%20shem.png)
 
-
+Настройки производим на R18.
+````
+ip prefix-list BGP_no_trasit seq 5 permit 113.201.100.0/24
+neighbor 113.201.100.11 prefix-list BGP_no_trasit out
+neighbor 113.201.100.9 prefix-list BGP_no_trasit out
+````
 
 ### 3. Настроить провайдера Киторн так, чтобы в офис Москва отдавался только маршрут по умолчанию.
 
+ip prefix-list Only_def_BGP seq 5 permit 0.0.0.0/0
 
+neighbor 33.13.8.21 default-originate
+neighbor 33.13.8.21 prefix-list Only_def_BGP out
 
 
 
 
 ### 4. Настроить провайдера Ламас так, чтобы в офис Москва отдавался только маршрут по умолчанию и префикс офиса С.-Петербург.
 
-ip prefix-list Only_def_BGP seq 5 permit 0.0.0.0/0
 
-neighbor 33.13.8.21 default-originate
-neighbor 33.13.8.21 prefix-list Only_def_BGP out
