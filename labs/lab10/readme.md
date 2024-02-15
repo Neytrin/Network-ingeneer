@@ -385,7 +385,7 @@ R15(config-route-map)#set local-preference 1000
 
 R15(config)#router bgp 1001
 R15(config-router)#address-family ipv4
-R15(config-router-af)#neighbor 77.100.10.40 route-map Local-Pref out
+R15(config-router-af)#neighbor 77.100.10.40 route-map Local-Pref in
 ````
 Действительно, предпочтительными маршрутами на внешние сети стали маршруты в сторону AS301
 
