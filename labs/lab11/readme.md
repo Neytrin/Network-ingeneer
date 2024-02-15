@@ -317,5 +317,5 @@ R21(config-router-af)# neighbor 203A:BB8A:D701:1::2 default-originate
 ![R15 sh_ip_bgp1.png](R15%20sh_ip_bgp1.png)
 
 
-Все изменения в настройках оборудования приведены [здесь]()
+Все изменения в настройках оборудования приведены [здесь](https://github.com/Neytrin/Network-ingeneer/blob/aec510dca52dd60215ca95ea53ae29a1eae95942/labs/lab11/Configs)
 
