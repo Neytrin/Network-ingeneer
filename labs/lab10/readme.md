@@ -330,7 +330,7 @@ R23#
 
 ![R26 sh_ip_bgp.png](R26%20sh_ip_bgp.png)
 
-Маршруты полученные по BGP d таблицe маршрутизации IPv4 R26
+Маршруты полученные по BGP в таблицe маршрутизации IPv4 R26
 
 ![R26 sh_ip_route_bgp.png](R26%20sh_ip_route_bgp.png)
 
@@ -431,5 +431,115 @@ R14(config-router-af)#neighbor 33.13.8.20 route-map AS_PATH_PREP out
 
 Видно, что в таблицу маршрутизации добавились дополнительные маршруты на внешние сети принятые по eBGP, а не только те,
 что были выбраны лучшими. 
+
+### 5. Работа над ошибками
+
+1. Настройка Триады.
+- на RR имеет смысл попробовать настройку с использование peer-group. Это сократит объем конфига.
+- на маршрутизаторах лучше использовать next-hop-self аналогично тому, как вы сделали в Москве.
+
+После внесения изменений в настройках маршрутизаторов сети Триада, покажем настройки BGP c помощью peer-group для RR R24
+
+````
+R24#sh run | sec bgp
+router bgp 520
+ bgp router-id 24.24.24.24
+ bgp log-neighbor-changes
+ neighbor iBGP_client peer-group
+ neighbor iBGP_client remote-as 520
+ neighbor iBGP_client update-source Loopback0
+ neighbor iBGP_client_v6 peer-group
+ neighbor iBGP_client_v6 remote-as 520
+ neighbor iBGP_client_v6 update-source Loopback0
+ neighbor 10.1.1.23 peer-group iBGP_client
+ neighbor 10.1.1.25 peer-group iBGP_client
+ neighbor 10.1.1.26 remote-as 520
+ neighbor 10.1.1.26 update-source Loopback0
+ neighbor 203A:88A1:A789:1::2:1 remote-as 301
+ neighbor 203A:88A1:A789:1::3:1 remote-as 2042
+ neighbor 203A:88A1:A789:8888::23 peer-group iBGP_client_v6
+ neighbor 203A:88A1:A789:8888::25 peer-group iBGP_client_v6
+ neighbor 203A:88A1:A789:8888::26 remote-as 520
+ neighbor 203A:88A1:A789:8888::26 update-source Loopback0
+ neighbor 90.7.17.53 remote-as 301
+ neighbor 113.201.100.8 remote-as 2042
+ !
+ address-family ipv4
+  network 90.7.16.0 mask 255.255.252.0
+  network 98.10.10.4 mask 255.255.255.252
+  neighbor iBGP_client route-reflector-client
+  neighbor iBGP_client next-hop-self
+  neighbor 10.1.1.23 activate
+  neighbor 10.1.1.25 activate
+  neighbor 10.1.1.26 activate
+  neighbor 10.1.1.26 next-hop-self
+  no neighbor 203A:88A1:A789:1::2:1 activate
+  no neighbor 203A:88A1:A789:1::3:1 activate
+  no neighbor 203A:88A1:A789:8888::23 activate
+  no neighbor 203A:88A1:A789:8888::25 activate
+  no neighbor 203A:88A1:A789:8888::26 activate
+  neighbor 90.7.17.53 activate
+  neighbor 113.201.100.8 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network 203A:88A1:A789::/48
+  neighbor iBGP_client_v6 route-reflector-client
+  neighbor iBGP_client_v6 next-hop-self
+  neighbor 203A:88A1:A789:1::2:1 activate
+  neighbor 203A:88A1:A789:1::3:1 activate
+  neighbor 203A:88A1:A789:8888::26 activate
+  neighbor 203A:88A1:A789:8888::26 next-hop-self
+ exit-address-family
+R24#
+````
+и RR клиента R23
+````
+R23(config-router-af)#do sh run | sec bgp
+router bgp 520
+ bgp log-neighbor-changes
+ neighbor 10.1.1.24 remote-as 520
+ neighbor 10.1.1.24 update-source Loopback0
+ neighbor 10.1.1.26 remote-as 520
+ neighbor 10.1.1.26 update-source Loopback0
+ neighbor 203A:88A1:A789:1::1:1 remote-as 101
+ neighbor 203A:88A1:A789:8888::24 remote-as 520
+ neighbor 203A:88A1:A789:8888::24 update-source Loopback0
+ neighbor 203A:88A1:A789:8888::26 remote-as 520
+ neighbor 203A:88A1:A789:8888::26 update-source Loopback0
+ neighbor 90.7.17.11 remote-as 101
+ !
+ address-family ipv4
+  neighbor 10.1.1.24 activate
+  neighbor 10.1.1.24 next-hop-self
+  neighbor 10.1.1.26 activate
+  neighbor 10.1.1.26 next-hop-self
+  no neighbor 203A:88A1:A789:1::1:1 activate
+  no neighbor 203A:88A1:A789:8888::24 activate
+  no neighbor 203A:88A1:A789:8888::26 activate
+  neighbor 90.7.17.11 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor 203A:88A1:A789:1::1:1 activate
+  neighbor 203A:88A1:A789:8888::24 activate
+  neighbor 203A:88A1:A789:8888::24 next-hop-self
+  neighbor 203A:88A1:A789:8888::26 activate
+  neighbor 203A:88A1:A789:8888::26 next-hop-self
+ exit-address-family
+R23(config-router-af)#
+````
+Проверим соседство по IBGP
+
+![R24 sh_ip_bgp_summ.png](R24%20sh_ip_bgp_summ.png)
+
+Убедимся, что в базе BGP маршруты полученные по iBGP в Next hop указаны уже адреса соседей iBGP.
+
+![R24 sh_ip_bgp.png](R24%20sh_ip_bgp.png)
+
+2. Манипуляция BGP path attributes в Москве.
+- опечатка или остаток копи/пасты - route-map на R15 применен в направлении out,
+
+Исправил по тексту.
 
 Все изменения в настройках оборудования приведены [здесь](https://github.com/Neytrin/Network-ingeneer/blob/911482025fabc788fb918b0899bdeaea7789ad79/labs/lab10/Configs)
