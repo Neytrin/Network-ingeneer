@@ -260,6 +260,8 @@ R18(config-router-af)#neighbor 113.201.100.9 prefix-list BGP_no_trasit out
 Выполним команду
 ````
 R22(config-router-af)#neighbor 33.13.8.21 default-originate
+
+R22(config-router-af)#neighbor 203A:BB8A:D701::2 default-originate
 ````
 
 ![R14 sh_ip_bgp after.png](R14%20sh_ip_bgp%20after.png)
@@ -270,10 +272,20 @@ R22(config-router-af)#neighbor 33.13.8.21 default-originate
 
 ````
 R22(config)#ip prefix-list Only_def_BGP seq 5 permit 0.0.0.0/0
+R22(config)#ipv6 prefix-list Only_def_BGP_v6 seq 5 permit ::/0
 
 R22(config-router-af)#neighbor 33.13.8.21 prefix-list Only_def_BGP out
+
+R22(config-router-af)neighbor 203A:BB8A:D701::2 prefix-list Only_def_BGP_v6 out
 ````
+
+Для IPv4
+
 ![R14 sh_ip_bgp after1.png](R14%20sh_ip_bgp%20after1.png)
+
+Для IPv6
+
+![R14 sh_ip_bgp IPv6.png](R14%20sh_ip_bgp%20IPv6.png)
 
 Выполнено
 
