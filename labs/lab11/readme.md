@@ -237,10 +237,15 @@ C помощью prefix-list побробуем настроить на R18 фи
 
 ````
 R18(config)# ip prefix-list BGP_no_trasit seq 5 permit 113.201.100.0/24
+R18(config)# ipv6 prefix-list BGP_no_trasit_v6 seq 5 permit 203A:34:701::/48
 R18(config)#router bgp 2042
 R18(config-router)#address-family ipv4
 R18(config-router-af)#neighbor 113.201.100.11 prefix-list BGP_no_trasit out
 R18(config-router-af)#neighbor 113.201.100.9 prefix-list BGP_no_trasit out
+
+R18(config-router)#address-family ipv6
+R18(config-router-af)#neighbor 203A:88A1:A789:1::3:2 prefix-list BGP_no_trasit_v6 out
+R18(config-router-af)#neighbor 203A:88A1:A789:1::4:2 prefix-list BGP_no_trasit_v6 out
 ````
 
 ![R22 sh_ip_bgp transit AS520.png](R22%20sh_ip_bgp%20transit%20AS520.png)
