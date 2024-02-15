@@ -221,16 +221,31 @@ R15(config-router-af)#neighbor 203A:BB8A:D701:8888::14 filter-list 1 out
 
 При нормальных условиях протокол eBGP должен предотвращать возможность возникновения петель. Тоесть маршруты BGP, 
 где в атрибуте AS Path присутствует номер собственной AS, в нашем случае 520, будет отброшен роутером на входе в эту-же AS.
-Это условие можно обойти командой  отключающей предотвращение петель AS_PATH для маршрутов BGP, полученных от определенного соседнего узла. 
-
+Это условие можно обойти командой **_neighbor <ip-address> allowas-in_** отключающей предотвращение петель AS_PATH для маршрутов BGP, полученных от определенного соседнего узла. 
+Пример на R26
+````
+R26(config-router-af)#neighbor 113.201.100.10 allowas-in 1
+````
 Для наглядности будем смотреть на R22 (AS101) доступность сети объявленной в AS301.
 
-Настройки производим на R18.
+![R22 sh_ip_bgp transit AS520.png](R22%20sh_ip_bgp%20transit%20AS520.png)
+
+Получено два маршрута на сети из/через AS301 транзитом через AS2042.
+
+C помощью prefix-list побробуем настроить на R18 фильтрацию всех маршрутов проходящих через AS520
+так, что-бы остались только маршруты из собственной сети.
+
 ````
-ip prefix-list BGP_no_trasit seq 5 permit 113.201.100.0/24
-neighbor 113.201.100.11 prefix-list BGP_no_trasit out
-neighbor 113.201.100.9 prefix-list BGP_no_trasit out
+R18(config)# ip prefix-list BGP_no_trasit seq 5 permit 113.201.100.0/24
+R18(config)#router bgp 2042
+R18(config-router)#address-family ipv4
+R18(config-router-af)#neighbor 113.201.100.11 prefix-list BGP_no_trasit out
+R18(config-router-af)#neighbor 113.201.100.9 prefix-list BGP_no_trasit out
 ````
+
+![R22 sh_ip_bgp transit AS520.png](R22%20sh_ip_bgp%20transit%20AS520.png)
+
+В результате транзитные маршруты BGP через AS2042 отсутствуют.
 
 ### 3. Настроить провайдера Киторн так, чтобы в офис Москва отдавался только маршрут по умолчанию.
 
