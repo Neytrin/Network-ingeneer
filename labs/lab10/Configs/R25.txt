@@ -1,4 +1,5 @@
-Current configuration : 3227 bytes
+
+Current configuration : 3395 bytes
 !
 ! Last configuration change at 13:45:15 MSK Sun Feb 11 2024
 !
@@ -125,14 +126,18 @@ router bgp 520
  !
  address-family ipv4
   neighbor 10.1.1.24 activate
+  neighbor 10.1.1.24 next-hop-self
   neighbor 10.1.1.26 activate
+  neighbor 10.1.1.26 next-hop-self
   no neighbor 203A:88A1:A789:8888::24 activate
   no neighbor 203A:88A1:A789:8888::26 activate
  exit-address-family
  !
  address-family ipv6
   neighbor 203A:88A1:A789:8888::24 activate
+  neighbor 203A:88A1:A789:8888::24 next-hop-self
   neighbor 203A:88A1:A789:8888::26 activate
+  neighbor 203A:88A1:A789:8888::26 next-hop-self
  exit-address-family
 !
 ip forward-protocol nd
