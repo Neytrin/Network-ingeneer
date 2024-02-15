@@ -300,12 +300,22 @@ R22(config-router-af)neighbor 203A:BB8A:D701::2 prefix-list Only_def_BGP_v6 out
 Поэтому приводим команды настроек и покажем результат на R15.
 
 ````
+R21(config)#ip prefix-list Only_def_BGP seq 5 permit 0.0.0.0/0
+R21(config)#ip prefix-list Only_def_BGP seq 10 permit 113.201.100.0/24
+R21(config)#ipv6 prefix-list Only_def_BGPv6 seq 5 permit ::/0
+R21(config)#ipv6 prefix-list Only_def_BGPv6 seq 10 permit 203a:34:701::/48
+
+R21(config-router-af)#neighbor 77.100.10.41 prefix-list Only_def_BGP out
+R21(config-router-af)#neighbor 77.100.10.41 default-originate
+
+R21(config-router-af)#$03A:BB8A:D701:1::2 prefix-list Only_def_BGPv6 out
+R21(config-router-af)# neighbor 203A:BB8A:D701:1::2 default-originate
 ````
 
+![R15 sh_ip_bgp.png](R15%20sh_ip_bgp.png)
 
+![R15 sh_ip_bgp1.png](R15%20sh_ip_bgp1.png)
 
-
-Все необходимые настройки выполнены и для IPv6.
 
 Все изменения в настройках оборудования приведены [здесь]()
 
