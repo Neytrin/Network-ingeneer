@@ -1,0 +1,227 @@
+Current configuration : 4251 bytes
+!
+! Last configuration change at 00:31:04 MSK Sun Feb 18 2024
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname SW5
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$I3dW$6D9U51pv2AxF1fYNMIh8M1
+!
+username admin privilege 15 secret 5 $1$pIo3$.NUI4URydjIWdlcqxlIYQ0
+no aaa new-model
+clock timezone MSK 3 0
+fhrp version vrrp v3
+!
+!
+!
+!
+!
+!
+ip dhcp excluded-address 172.16.8.1 172.16.8.4
+ip dhcp excluded-address 172.16.12.1 172.16.12.4
+!
+!
+no ip domain-lookup
+ip domain-name Moskow1001.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree vlan 99 priority 24576
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.0.5 255.255.255.255
+ ipv6 address 203A:BB8A:D701:8888::5/128
+ ipv6 enable
+!
+interface Loopback100
+ ip address 172.16.13.1 255.255.255.255
+ ip ospf 1 area 10
+!
+interface Port-channel1
+ no switchport
+ ip address 192.168.1.20 255.255.255.254
+ ip ospf 1 area 10
+ ipv6 address FE80::5 link-local
+ ipv6 address 203A:BB8A:D701:C::5:4/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 10
+!
+interface Ethernet0/0
+ description to_SW2
+ switchport trunk allowed vlan 20,99
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport mode trunk
+!
+interface Ethernet0/1
+ description to_SW3
+ switchport trunk allowed vlan 10,99
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport mode trunk
+!
+interface Ethernet0/2
+ no switchport
+ no ip address
+ duplex auto
+ channel-group 1 mode active
+!
+interface Ethernet0/3
+ no switchport
+ no ip address
+ duplex auto
+ channel-group 1 mode active
+!
+interface Ethernet1/0
+ description to_R13
+ no switchport
+ ip address 192.168.1.17 255.255.255.254
+ ip ospf 1 area 10
+ duplex auto
+ ipv6 address FE80::5 link-local
+ ipv6 address 203A:BB8A:D701:A::5:13/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 10
+!
+interface Ethernet1/1
+ description to_R12
+ no switchport
+ ip address 192.168.1.15 255.255.255.254
+ ip ospf 1 area 10
+ duplex auto
+ ipv6 address FE80::5 link-local
+ ipv6 address 203A:BB8A:D701:9::5:12/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 10
+!
+interface Ethernet1/2
+!
+interface Ethernet1/3
+!
+interface Vlan10
+ description Client1
+ ip address 172.16.8.2 255.255.255.0
+ ip helper-address 192.168.0.12
+ ip helper-address 192.168.0.13
+ ip ospf 1 area 10
+ ipv6 address 203A:BB8A:D701:1010::2/64
+ ipv6 enable
+ ipv6 dhcp relay destination 203A:BB8A:D701:8888::13
+ ipv6 dhcp relay destination 203A:BB8A:D701:8888::12
+ ospfv3 1 ipv6 area 10
+ vrrp 2 address-family ipv4
+  description Client1_ipv4
+  address 172.16.8.1 primary
+  exit-vrrp
+ vrrp 21 address-family ipv6
+  description Client1_ipv6
+  address FE80::4:4 primary
+  exit-vrrp
+!
+interface Vlan20
+ description Client7
+ ip address 172.16.12.2 255.255.255.0
+ ip helper-address 192.168.0.12
+ ip helper-address 192.168.0.13
+ ip ospf 1 area 10
+ ipv6 address 203A:BB8A:D701:1020::2/64
+ ipv6 enable
+ ipv6 dhcp relay destination 203A:BB8A:D701:8888::13
+ ipv6 dhcp relay destination 203A:BB8A:D701:8888::12
+ ospfv3 1 ipv6 area 10
+ vrrp 3 address-family ipv4
+  description Client7_ipv4
+  priority 150
+  address 172.16.12.1 primary
+  exit-vrrp
+ vrrp 31 address-family ipv6
+  description Client7_ipv6
+  priority 150
+  address FE80::4:5 primary
+  exit-vrrp
+!
+interface Vlan99
+ description Mgmt_Access_SW
+ ip address 192.168.0.130 255.255.255.128
+ ipv6 address 203A:BB8A:D701:D::5/112
+ ipv6 enable
+ vrrp 1 address-family ipv4
+  description Mgmt_Access_SW
+  address 192.168.0.129 primary
+  exit-vrrp
+ vrrp 11 address-family ipv6
+  description Mgmt_Access_SW
+  address FE80::4:1 primary
+  exit-vrrp
+!
+router ospfv3 1
+ area 10 stub
+ !
+ address-family ipv6 unicast
+  passive-interface Vlan10
+  passive-interface Vlan20
+ exit-address-family
+!
+router ospf 1
+ area 10 stub
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 030752180500
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 060506324F41
+ logging synchronous
+ login
+!
+ntp update-calendar
+ntp server 192.168.0.12 source Loopback0
+ntp server 192.168.0.13 source Loopback0
+!
+end
