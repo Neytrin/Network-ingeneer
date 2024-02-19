@@ -1,0 +1,196 @@
+Current configuration : 3051 bytes
+!
+! No configuration change since last restart
+! NVRAM config last updated at 23:31:52 MSK Sun Feb 18 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R13
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$Kz0C$IGdv1I6qiYGca/pzG9TSE1
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 172.16.8.1 172.16.8.4
+ip dhcp excluded-address 172.16.12.1 172.16.12.4
+!
+ip dhcp pool NET_10
+ network 172.16.8.0 255.255.255.0
+ domain-name Moskow1001.com
+ default-router 172.16.8.1
+ lease 2
+!
+ip dhcp pool NET_20
+ network 172.16.12.0 255.255.255.0
+ default-router 172.16.12.1
+ domain-name Moskow1001.com
+!
+!
+!
+no ip domain lookup
+ip domain name Moskow1001.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$UCzy$3.VM7CxR2ILt1pVtHAZRL.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.0.13 255.255.255.255
+ ip ospf 1 area 10
+ ipv6 address 203A:BB8A:D701:8888::13/128
+ ipv6 enable
+ ospfv3 1 ipv6 area 10
+!
+interface Ethernet0/0
+ description to_SW5
+ ip address 192.168.1.16 255.255.255.254
+ ip ospf 1 area 10
+ ipv6 address FE80::13 link-local
+ ipv6 address 203A:BB8A:D701:A::13:5/64
+ ipv6 enable
+ ipv6 nd other-config-flag
+ ipv6 dhcp server SW4-Stateless
+ ospfv3 1 ipv6 area 10
+!
+interface Ethernet0/1
+ description to_SW4
+ ip address 192.168.1.18 255.255.255.254
+ ip ospf 1 area 10
+ ipv6 address FE80::13 link-local
+ ipv6 address 203A:BB8A:D701:B::13:4/64
+ ipv6 enable
+ ipv6 nd other-config-flag
+ ipv6 dhcp server SW4-Stateless
+ ospfv3 1 ipv6 area 10
+!
+interface Ethernet0/2
+ description to_R15
+ ip address 192.168.1.7 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::13 link-local
+ ipv6 address 203A:BB8A:D701:5::13:15/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 0
+!
+interface Ethernet0/3
+ description to_R14
+ ip address 192.168.1.3 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::13 link-local
+ ipv6 address 203A:BB8A:D701:3::13:14/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 0
+!
+interface Ethernet1/0
+ description to_R12
+ ip address 192.168.1.25 255.255.255.254
+ ip ospf 1 area 0
+ ipv6 address FE80::13 link-local
+ ipv6 address 203A:BB8A:D701:E::13:12/64
+ ipv6 enable
+ ospfv3 1 ipv6 area 0
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router ospfv3 1
+ area 10 stub
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+router ospf 1
+ area 10 stub
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 060506324F41
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 0822455D0A16
+ logging synchronous
+ login
+ transport input none
+!
+ntp master 2
+!
+end
