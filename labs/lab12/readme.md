@@ -1,12 +1,12 @@
 ## Практическое задание №12
 
-1. [Настроить NAT(PAT) на R14 и R15. Трансляция должна осуществляться в адрес автономной системы AS1001.]()
-2. [Настроить NAT(PAT) на R18. Трансляция должна осуществляться в пул из 5 адресов автономной системы AS2042.]()
-3. [Настроить статический NAT для R20.]()
-4. [Настроить NAT так, чтобы R19 был доступен с любого узла для удаленного управления.]()
-5. [Настроить статический NAT(PAT) для офиса Чокурдак.]()
-6. [Настроить IPv4 DHCP сервер в офисе Москва на маршрутизаторах R12 и R13. VPC1 и VPC7 должны получать сетевые настройки по DHCP.]()
-7. [Настроить NTP сервер на R12 и R13. Все устройства в офисе Москва должны синхронизировать время с R12 и R13.]()
+1. [Настроить NAT(PAT) на R14 и R15. Трансляция должна осуществляться в адрес автономной системы AS1001.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab12/readme.md#1-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-natpat-%D0%BD%D0%B0-r14-%D0%B8-r15-%D1%82%D1%80%D0%B0%D0%BD%D1%81%D0%BB%D1%8F%D1%86%D0%B8%D1%8F-%D0%B4%D0%BE%D0%BB%D0%B6%D0%BD%D0%B0-%D0%BE%D1%81%D1%83%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BB%D1%8F%D1%82%D1%8C%D1%81%D1%8F-%D0%B2-%D0%B0%D0%B4%D1%80%D0%B5%D1%81-%D0%B0%D0%B2%D1%82%D0%BE%D0%BD%D0%BE%D0%BC%D0%BD%D0%BE%D0%B9-%D1%81%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D1%8B-as1001)
+2. [Настроить NAT(PAT) на R18. Трансляция должна осуществляться в пул из 5 адресов автономной системы AS2042.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab12/readme.md#2-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-natpat-%D0%BD%D0%B0-r18-%D1%82%D1%80%D0%B0%D0%BD%D1%81%D0%BB%D1%8F%D1%86%D0%B8%D1%8F-%D0%B4%D0%BE%D0%BB%D0%B6%D0%BD%D0%B0-%D0%BE%D1%81%D1%83%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%BB%D1%8F%D1%82%D1%8C%D1%81%D1%8F-%D0%B2-%D0%BF%D1%83%D0%BB-%D0%B8%D0%B7-5-%D0%B0%D0%B4%D1%80%D0%B5%D1%81%D0%BE%D0%B2-%D0%B0%D0%B2%D1%82%D0%BE%D0%BD%D0%BE%D0%BC%D0%BD%D0%BE%D0%B9-%D1%81%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D1%8B-as2042)
+3. [Настроить статический NAT для R20.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab12/readme.md#3-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-%D1%81%D1%82%D0%B0%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9-nat-%D0%B4%D0%BB%D1%8F-r20)
+4. [Настроить NAT так, чтобы R19 был доступен с любого узла для удаленного управления.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab12/readme.md#4-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-nat-%D1%82%D0%B0%D0%BA-%D1%87%D1%82%D0%BE%D0%B1%D1%8B-r19-%D0%B1%D1%8B%D0%BB-%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B5%D0%BD-%D1%81-%D0%BB%D1%8E%D0%B1%D0%BE%D0%B3%D0%BE-%D1%83%D0%B7%D0%BB%D0%B0-%D0%B4%D0%BB%D1%8F-%D1%83%D0%B4%D0%B0%D0%BB%D0%B5%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE-%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F)
+5. [Настроить статический NAT(PAT) для офиса Чокурдак.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab12/readme.md#5-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D0%B5-%D1%81%D1%82%D0%B0%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9-natpat-%D0%B4%D0%BB%D1%8F-%D0%BE%D1%84%D0%B8%D1%81%D0%B0-%D1%87%D0%BE%D0%BA%D1%83%D1%80%D0%B4%D0%B0%D0%BA)
+6. [Настроить IPv4 DHCP сервер в офисе Москва на маршрутизаторах R12 и R13. VPC1 и VPC7 должны получать сетевые настройки по DHCP.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab12/readme.md#6-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-ipv4-dhcp-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80-%D0%B2-%D0%BE%D1%84%D0%B8%D1%81%D0%B5-%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B0-%D0%BD%D0%B0-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80%D0%B0%D1%85-r12-%D0%B8-r13-vpc1-%D0%B8-vpc7-%D0%B4%D0%BE%D0%BB%D0%B6%D0%BD%D1%8B-%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B0%D1%82%D1%8C-%D1%81%D0%B5%D1%82%D0%B5%D0%B2%D1%8B%D0%B5-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8-%D0%BF%D0%BE-dhcp)
+7. [Настроить NTP сервер на R12 и R13. Все устройства в офисе Москва должны синхронизировать время с R12 и R13.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/lab12/readme.md#7-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-ntp-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80-%D0%BD%D0%B0-r12-%D0%B8-r13-%D0%B2%D1%81%D0%B5-%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%B0-%D0%B2-%D0%BE%D1%84%D0%B8%D1%81%D0%B5-%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B0-%D0%B4%D0%BE%D0%BB%D0%B6%D0%BD%D1%8B-%D1%81%D0%B8%D0%BD%D1%85%D1%80%D0%BE%D0%BD%D0%B8%D0%B7%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C-%D0%B2%D1%80%D0%B5%D0%BC%D1%8F-%D1%81-r12-%D0%B8-r13)
 
 Схема лабораторного стенда.
 
@@ -360,6 +360,7 @@ SW4(config-if)#ipv6 dhcp relay destination 203a:bb8a:d701:8888::13
 ### 7. Настроить NTP сервер на R12 и R13. Все устройства в офисе Москва должны синхронизировать время с R12 и R13.
 
 Выполним настройку NTP сервера на R12 и R13 командой **_ntp master 2_**
+
 На NTP клиентах выполняем команды 
 ````
 ntp server 192.168.0.12 source loopback 0
@@ -369,7 +370,7 @@ ntp update-calendar
 
 ![R19 NTP.png](R19%20NTP.png)
 
-Все изменения в настройках оборудования приведены [здесь]()
+Все изменения в настройках оборудования приведены [здесь](https://github.com/Neytrin/Network-ingeneer/blob/d953dbc185b09861a258c3dd418fb29f7f2fa25b/labs/lab12/Configs)
 
 
 
