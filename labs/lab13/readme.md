@@ -1,7 +1,7 @@
 ## Практическое задание №13
 
 1. [Настроить GRE между офисами Москва и С.-Петербург.]()
-2. [Настроить DMVMN между Москва и Чокурдах, Лабытнанги.]()
+2. [Настроить DMVPN между Москва и Чокурдах, Лабытнанги.]()
 
 
 Схема лабораторного стенда.
@@ -163,6 +163,34 @@
 
 ### 1. Настроить GRE между офисами Москва и С.-Петербург.
 
+Приступаем к настройке туннелей на R15
+````
+R15(config)#interface tunnel 1
+R15(config-if)#description GRE_to_Piter
+R15(config-if)#tunnel mode gre ip
+R15(config-if)#ip address 10.0.1.1 255.255.255.0
+R15(config-if)#tunnel source e0/2
+R15(config-if)#tunnel destination 113.201.100.8
+R15(config-if)#ip mtu 1400
+R15(config-if)# ip tcp adjust-mss 1360
+````
+и R18 
+````
+R18(config)#interface Tunnel1
+R18(config-if)#description GRE_to_MSK
+R18(config-if)#tunnel mode gre ip
+R18(config-if)#ip address 10.0.1.2 255.255.255.0
+R18(config-if)#ip mtu 1400
+R18(config-if)#ip tcp adjust-mss 1360
+R18(config-if)#tunnel source 113.201.100.8
+R18(config-if)#tunnel destination 77.100.10.41
+````
+В качестве источника и назначения выбраны интерфейсы роутеров включенные в сторону провайдеров.
+Как показано на рисунке ниже
+
+
+
+Проверяем 
 
 
 
@@ -177,12 +205,23 @@
 
 
 
+interface Tunnel1
+description GRE_to_MSK
+ip address 10.0.1.3 255.255.255.0
+ip mtu 1400
+ip tcp adjust-mss 1360
+tunnel source Loopback1
+tunnel destination 98.10.10.1
 
 
 
 
 
-### 2. Настроить DMVMN между Москва и Чокурдах, Лабытнанги.
+
+
+
+
+### 2. Настроить DMVPN между Москва и Чокурдах, Лабытнанги.
 
 
 
