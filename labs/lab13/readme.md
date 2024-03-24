@@ -358,15 +358,67 @@ interface Tunnel8
  tunnel mode gre multipoint
 end
 ````
-Посмотрим что получилось в результате настройки
+Посмотрим что получилось в результате настройки на стороне R15.
 
+![sh DMVPN R15.png](sh%20DMVPN%20R15.png)
 
+туннели в сторону удаленных офисов собрались.
 
+Теперь проверим результыты настройки на одном из Spoke, например R28.
 
+![sh DMVPN R28.png](sh%20DMVPN%20R28.png)
 
+Присутствует только туннель построенный в сторону HUB R15. Попробуем послать запрос в сторону офиса Лабытнанги
 
+![sh DMVPN R28 Full.png](sh%20DMVPN%20R28%20Full.png)
 
+Туннель в сторону R27 построился динамически и теперь возможна соединение между филиалами напрямую минуя офис в Москве.
 
+Посмотрим как стала выглядеть таблица маршрутизации на R28
+````
+R28#sh ip route ospf
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override
+
+Gateway of last resort is 90.7.18.122 to network 0.0.0.0
+
+      10.0.0.0/8 is variably subnetted, 3 subnets, 2 masks
+O IA     10.0.1.0/24 [110/2000] via 10.0.8.1, 01:05:57, Tunnel8
+      98.0.0.0/32 is subnetted, 2 subnets
+O IA     98.10.10.1 [110/1001] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     98.10.10.2 [110/1011] via 10.0.8.1, 01:05:57, Tunnel8
+      172.16.0.0/16 is variably subnetted, 6 subnets, 2 masks
+O IA     172.16.8.0/24 [110/1030] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     172.16.12.0/24 [110/1030] via 10.0.8.1, 01:05:57, Tunnel8
+      192.168.0.0/24 is variably subnetted, 7 subnets, 2 masks
+O IA     192.168.0.12/32 [110/1011] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.0.13/32 [110/1011] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.0.14/32 [110/1011] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.0.15/32 [110/1001] via 10.0.8.1, 01:05:57, Tunnel8
+      192.168.1.0/31 is subnetted, 13 subnets
+O IA     192.168.1.0 [110/1020] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.2 [110/1020] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.4 [110/1020] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.6 [110/1010] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.8 [110/1010] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.10 [110/1010] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.12 [110/1020] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.14 [110/1020] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.16 [110/1020] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.18 [110/1020] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.20 [110/1030] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.22 [110/1010] via 10.0.8.1, 01:05:57, Tunnel8
+O IA     192.168.1.24 [110/1020] via 10.0.8.1, 01:05:57, Tunnel8
+R28#
+````
+Получены маршруты по протоколу OSPF в направлении сетей офиса Москва
 
 
 Все изменения в настройках оборудования приведены [здесь]()
