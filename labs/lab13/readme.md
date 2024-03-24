@@ -283,13 +283,82 @@ R14(config)#ip route 172.18.2.0 255.255.255.0 10.0.1.1
 Cчитаем, что Чокурдак и Лабытнанги удаленные филиалы центрального офиса в Москве. В сети офиса Москва в качестве IGP был применен OSPF.
 Свяжем центральной офис и филиалы одним динамическим туннелем DMVPN фаза 3 с OSPF.
 
-Покажем настройки для R15 выступающим в роли HUB
+Покажем настройки туннеля для R15 выступающим в роли HUB
 
 ````
+R15#sh run int tunnel 8
+Building configuration...
 
-
+Current configuration : 374 bytes
+!
+interface Tunnel8
+ description DMVPN_INSIDE_COMPANY
+ ip address 10.0.8.1 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip nhrp authentication MSK1001
+ ip nhrp map multicast dynamic
+ ip nhrp network-id 8
+ ip nhrp redirect
+ ip tcp adjust-mss 1360
+ ip ospf network broadcast
+ ip ospf priority 255
+ ip ospf 1 area 8
+ tunnel source 77.100.10.41
+ tunnel mode gre multipoint
+end
 ````
+Роутеры R27 и R28 выступают в роли spoke, покажеи настройки и для них
+На R27
+````
+R27#sh run int tun 8
+Building configuration...
 
+Current configuration : 368 bytes
+!
+interface Tunnel8
+ description DMVPN_INSIDE_COMPANY
+ ip address 10.0.8.3 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip nhrp authentication MSK1001
+ ip nhrp map multicast 77.100.10.41
+ ip nhrp map 10.0.8.1 77.100.10.41
+ ip nhrp network-id 8
+ ip nhrp nhs 10.0.8.1
+ ip nhrp shortcut
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/0
+ tunnel mode gre multipoint
+end
+````
+На R28
+````
+R28#sh run int tun 8
+Building configuration...
+
+Current configuration : 433 bytes
+!
+interface Tunnel8
+ description DMVPN_INSIDE_COMPANY
+ ip address 10.0.8.4 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip nhrp authentication MSK1001
+ ip nhrp map multicast 77.100.10.41
+ ip nhrp map 10.0.8.1 77.100.10.41
+ ip nhrp network-id 8
+ ip nhrp nhs 10.0.8.1
+ ip nhrp shortcut
+ ip tcp adjust-mss 1360
+ ip ospf network broadcast
+ ip ospf priority 0
+ ip ospf 1 area 8
+ tunnel source Ethernet0/0
+ tunnel mode gre multipoint
+end
+````
+Посмотрим что получилось в результате настройки
 
 
 
