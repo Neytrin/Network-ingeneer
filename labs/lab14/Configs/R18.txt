@@ -1,0 +1,274 @@
+Building configuration...
+
+Current configuration : 5553 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R18
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$pr1y$ipdlyliCS8t/ymh0bMJ2y/
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name SPeterburg2042.ru
+ip dhcp-server 172.23.13.18
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+key chain EIGRP
+ key 1
+  key-string 7 072C285F4D0659
+  cryptographic-algorithm hmac-sha-256
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$HGSM$.l02KmpR5C6fzqsdc6koR/
+!
+redundancy
+!
+!
+!
+!
+crypto ikev2 proposal Phase1
+ encryption aes-cbc-128
+ integrity md5
+ group 2
+!
+crypto ikev2 policy IKEV2
+ proposal Phase1
+!
+!
+crypto ikev2 profile PROFILE1
+ match address local interface Ethernet0/2
+ match identity remote address 77.100.10.41 255.255.255.255
+ authentication remote pre-share key Cisco2
+ authentication local pre-share key Cisco1
+!
+!
+!
+crypto ipsec transform-set IPSEC_TS esp-aes esp-md5-hmac
+ mode transport
+!
+!
+!
+crypto map IPSEC 1 ipsec-isakmp
+ set peer 77.100.10.41
+ set transform-set IPSEC_TS
+ set pfs group5
+ set ikev2-profile PROFILE1
+ match address R18_to_R15
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.23.13.18 255.255.255.255
+ ipv6 address 203A:34:701:8888::18/128
+ ipv6 enable
+!
+interface Loopback1
+ ip address 113.201.100.1 255.255.255.255
+!
+interface Tunnel1
+ description GRE_to_MSK
+ ip address 10.0.1.2 255.255.255.0
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source 113.201.100.8
+ tunnel destination 77.100.10.41
+!
+interface Ethernet0/0
+ description to_R16
+ ip address 172.18.13.5 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ipv6 address FE80::18 link-local
+ ipv6 address 203A:34:701::1:18:16/96
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_R17
+ ip address 172.18.13.1 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ipv6 address FE80::18 link-local
+ ipv6 address 203A:34:701::2:18:17/96
+ ipv6 enable
+!
+interface Ethernet0/2
+ description to_Triada24
+ ip address 113.201.100.8 255.255.255.254
+ ip nat outside
+ ip virtual-reassembly in
+ ipv6 address FE80::18 link-local
+ ipv6 address 203A:88A1:A789:1::3:1/112
+ ipv6 enable
+ no cdp enable
+ crypto map IPSEC
+!
+interface Ethernet0/3
+ description to_Triada26
+ ip address 113.201.100.10 255.255.255.254
+ ip nat outside
+ ip virtual-reassembly in
+ ipv6 address FE80::18 link-local
+ ipv6 address 203A:88A1:A789:1::4:1/112
+ ipv6 enable
+ no cdp enable
+!
+!
+router eigrp SPB
+ !
+ address-family ipv4 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/0
+   authentication mode hmac-sha-256 7 104D000A0618
+   authentication key-chain EIGRP
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   authentication mode hmac-sha-256 7 14141B180F0B
+   authentication key-chain EIGRP
+  exit-af-interface
+  !
+  topology base
+   redistribute static
+  exit-af-topology
+  network 172.18.13.0 0.0.0.255
+  network 172.23.13.18 0.0.0.0
+  eigrp router-id 172.23.13.18
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/0
+   authentication mode hmac-sha-256 7 110A1016141D
+   authentication key-chain EIGRP
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   authentication mode hmac-sha-256 7 14141B180F0B
+   authentication key-chain EIGRP
+  exit-af-interface
+  !
+  topology base
+   redistribute static metric 10000 1000 255 1 1500
+  exit-af-topology
+  eigrp router-id 172.23.13.18
+ exit-address-family
+!
+router bgp 2042
+ bgp router-id 18.18.18.18
+ bgp log-neighbor-changes
+ neighbor 203A:88A1:A789:1::3:2 remote-as 520
+ neighbor 203A:88A1:A789:1::4:2 remote-as 520
+ neighbor 113.201.100.9 remote-as 520
+ neighbor 113.201.100.11 remote-as 520
+ !
+ address-family ipv4
+  network 113.201.100.0 mask 255.255.255.0
+  no neighbor 203A:88A1:A789:1::3:2 activate
+  no neighbor 203A:88A1:A789:1::4:2 activate
+  neighbor 113.201.100.9 activate
+  neighbor 113.201.100.9 prefix-list BGP_no_trasit out
+  neighbor 113.201.100.11 activate
+  neighbor 113.201.100.11 prefix-list BGP_no_trasit out
+  maximum-paths 2
+ exit-address-family
+ !
+ address-family ipv6
+  maximum-paths 2
+  network 203A:34:701::/48
+  neighbor 203A:88A1:A789:1::3:2 activate
+  neighbor 203A:88A1:A789:1::3:2 prefix-list BGP_no_trasit_v6 out
+  neighbor 203A:88A1:A789:1::4:2 activate
+  neighbor 203A:88A1:A789:1::4:2 prefix-list BGP_no_trasit_v6 out
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat pool Pool_SPB_client 113.201.100.2 113.201.100.6 netmask 255.255.255.0
+ip nat inside source list 9 pool Pool_SPB_client
+ip route 0.0.0.0 0.0.0.0 Null0
+ip route 113.201.100.0 255.255.255.0 Null0
+ip route 172.16.12.0 255.255.255.0 Tunnel1
+!
+ip access-list extended R18_to_R15
+ permit gre host 113.201.100.8 host 77.100.10.41
+!
+!
+ip prefix-list BGP_no_trasit seq 5 permit 113.201.100.0/24
+ipv6 route 203A:34:701::/48 Null0
+ipv6 route ::/0 Null0
+!
+!
+ipv6 prefix-list BGP_no_trasit_v6 seq 5 permit 203A:34:701::/48
+!
+access-list 9 deny   172.18.2.0 0.0.0.3
+access-list 9 deny   172.18.1.0 0.0.0.3
+access-list 9 permit 172.18.2.0 0.0.0.255
+access-list 9 permit 172.18.1.0 0.0.0.255
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 094F471A1A0A
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 030752180500
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

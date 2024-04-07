@@ -1,0 +1,357 @@
+Building configuration...
+
+Current configuration : 9934 bytes
+!
+! Last configuration change at 13:08:28 MSK Sun Apr 7 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R28
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$aizv$GKo66PGWArCu4X9fdWLOj.
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 172.16.30.0 172.16.30.3
+ip dhcp excluded-address 172.16.31.0 172.16.31.3
+!
+ip dhcp pool R28_Client30
+ network 172.16.30.0 255.255.255.0
+ domain-name Chokurdak.com
+ default-router 172.16.30.1
+ lease infinite
+!
+ip dhcp pool R28_Client31
+ network 172.16.31.0 255.255.255.0
+ domain-name Chokurdak.com
+ default-router 172.16.31.1
+ lease infinite
+!
+!
+!
+no ip domain lookup
+ip domain name Chokurdak1001.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+ipv6 dhcp pool R28_Stateless
+ dns-server 203A:BB8A:D701:8888::1:1
+ domain-name Chokurdak.com
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+crypto pki trustpoint DMVPN
+ enrollment url http://77.100.10.41:80
+ ip-address ethernet0/0
+ subject-name CN=R28,OU=DMVPN,O=MSK,C=RU
+ revocation-check none
+ rsakeypair DMVPN
+!
+!
+crypto pki certificate chain DMVPN
+ certificate 03
+  30820361 30820249 A0030201 02020103 300D0609 2A864886 F70D0101 05050030
+  14311230 10060355 04031309 46726F6D 444D5650 4E301E17 0D323430 34303532
+  32333635 345A170D 32353034 30353232 33363534 5A308182 310B3009 06035504
+  06130252 55310C30 0A060355 040A1303 4D534B31 0E300C06 0355040B 1305444D
+  56504E31 0C300A06 03550403 13035232 38314730 2106092A 864886F7 0D010902
+  16145232 382E4368 6F6B7572 64616B31 3030312E 72753022 06092A86 4886F70D
+  01090813 15323033 413A3838 41313A41 3738393A 313A3A37 3A313082 0122300D
+  06092A86 4886F70D 01010105 00038201 0F003082 010A0282 010100A9 EB43A9BF
+  68A992D7 89206E4B 88C7142A 9EE73715 71956170 7CD92378 5A34B444 5F335811
+  F8BC36EA 8663940F 1130F6FD 08210E98 D09F1F4C F37AF6A7 4C30AA53 3838F3C7
+  078C3FE8 0C076A1B 6A856B3E 7AD2F0A7 68857AB1 98DD145B 31F751D1 8842CF43
+  6F7408FA B287C2A5 E351E8C6 81BA62F8 38282CA6 5FC7212F 5A7BF244 61979CAA
+  56419B0F 8374BC47 B62378D9 0C3D45BC 3C1CDD46 74910510 C8654265 5323BC62
+  08E3DC96 C2C1EEB3 D732EAF1 932CFAA5 876B6AE3 D424CA52 3CF62D66 38FDBA64
+  7AA844F3 079167A8 FECEE1F8 DAE1D127 736BC8B5 EDA897EF E7EA13B3 95C24D48
+  E732976F B791777B 2B6C1C88 0A6D6F53 351EF030 4D91D473 B9AA9F02 03010001
+  A34F304D 300B0603 551D0F04 04030205 A0301F06 03551D23 04183016 8014DE9E
+  111EC639 393314EF 1DD8A0F0 63612247 0C1D301D 0603551D 0E041604 1495BE02
+  24191EB3 3ACF44E7 5CA52DF2 BCBB0E23 3F300D06 092A8648 86F70D01 01050500
+  03820101 0096DDCC B70A6371 2A8DD116 9129B760 CEF74CDC 4A0AE442 999995CC
+  606DF3B7 A26F5AC8 1141A13F 9C1627CA 8E9FB447 BC794D69 DF1FAAAD 6524AC42
+  23A5EA86 4D4E43D3 7D3FD429 F811FE33 BECEEA66 4F5600DC 86E55451 710AF9EE
+  CF70DC54 2F06F98C 1B6CA482 9D7343CF 7BD5B4B6 AA3DA754 F77AF618 44CF94D7
+  52D50C52 390AF03D EC03E882 93AAA684 90673CEB 36FDA4F5 C96B2F62 8F44F8CD
+  7A3B53FE D0B0FABB D27300D4 85D4C504 8E3F6977 F75B5BCB 88024AFA 03F2B66A
+  8EF87466 16957524 5ADE9BE1 2E013A6F 9F394362 B5DDAEFD CFCFF525 D38BBC04
+  49E03654 DD2F4F87 0F94A0D3 5DA6470E 54E20897 6F755270 CB002EDA CBD5AC60
+  A881E2F8 1D
+        quit
+ certificate ca 01
+  30820306 308201EE A0030201 02020101 300D0609 2A864886 F70D0101 04050030
+  14311230 10060355 04031309 46726F6D 444D5650 4E301E17 0D323430 34303532
+  30343232 375A170D 32373034 30353230 34323237 5A301431 12301006 03550403
+  13094672 6F6D444D 56504E30 82012230 0D06092A 864886F7 0D010101 05000382
+  010F0030 82010A02 82010100 C626B289 13FA7FED E1E61817 C1793799 246001CA
+  42F0EF19 5309B37E B2608FA2 E1964645 71D1E179 AAA4B233 DC020188 9580D1D6
+  0AEC1772 ACB4EDD4 EEC40B57 14FAC8C7 81FA6E8A F9FF8186 4D3192FC CCDF7EA3
+  B1C1B348 3DD45FB6 42AD6A42 49EE41AE 2819E1EC 9D4DF784 D9F75E2D 61B44D21
+  FABE0058 42B0FF25 C3B224F1 525CEA95 48BF158E E746242A 11458280 8097866C
+  FB291EE5 FBC3D14C C90BE66E B424B86A 3481D8CF 84B0130D 88416AAE C711144B
+  ED3AC974 22415D12 434D7039 26A3FEB3 58BEF7AA D186274A 6AE80EA8 6589E3A8
+  DA64C50F 1D15B848 7A054697 F055A9DD 30846507 F09DE636 4BDD4C8A BBCF153C
+  12E0CCEE C40EF338 BEA63A2D 02030100 01A36330 61300F06 03551D13 0101FF04
+  05300301 01FF300E 0603551D 0F0101FF 04040302 0186301F 0603551D 23041830
+  168014DE 9E111EC6 39393314 EF1DD8A0 F0636122 470C1D30 1D060355 1D0E0416
+  0414DE9E 111EC639 393314EF 1DD8A0F0 63612247 0C1D300D 06092A86 4886F70D
+  01010405 00038201 0100A21A F4431FA4 FF19F8CB DE18627E 503DCEDB 8CE83679
+  A8C0C69F 55AFD971 A1725DDF 8C914EBF 80E228EC 0AC2C8D7 2BD1A099 817DDFFD
+  7A71832B 8A3EA502 0EE5C0C4 377705F0 9F8AB1DA 8A543624 84B3E577 4D62D7E9
+  B1D1DAF8 1F5DDE19 9F5380FF C756B1F5 168CAD81 D8172DB6 55BC62E2 C66FD3C4
+  19A95B4E 5282DE07 154D564D 453C5B27 092779EB 31647045 7621DA64 FAF81C02
+  5D96F303 D759B299 E69D6151 5E82382F 790286DA 463B0FCF E2241DB6 884A2E7C
+  00EBC804 9811E8B1 DB6A5FB7 CE655242 C3677B3E B8BFE1B5 A0B9CF36 2F8EA4A4
+  22F0EC42 E249F78A 66267988 EECDE9F8 F2750FAC 56A6BF68 E33D20F1 B2491E48
+  FF4BD7D0 86FB9517 62EF
+        quit
+username admin privilege 15 secret 5 $1$nf9O$PTe3VsyxvpmmELs.Pc2pC0
+!
+redundancy
+!
+!
+track 1 ip sla 1 reachability
+ delay down 10 up 5
+!
+track 2 ip sla 2 reachability
+ delay down 10 up 5
+!
+!
+!
+!
+!
+crypto ikev2 keyring IKEV2-KEYRING
+ peer dmvpn-node
+  address 0.0.0.0 0.0.0.0
+  pre-shared-key CiscoDMVPN
+ !
+!
+!
+crypto ikev2 profile IKEV2-PROF
+ match identity remote address 0.0.0.0
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local IKEV2-KEYRING
+!
+!
+!
+!
+crypto ipsec profile IKEV2-DMVPN
+ set ikev2-profile IKEV2-PROF
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.0.28 255.255.255.255
+ ipv6 address 203A:BB8A:D701:8888::28/128
+ ipv6 enable
+!
+interface Loopback1
+ ip address 90.7.18.2 255.255.255.255
+!
+interface Tunnel8
+ description DMVPN_INSIDE_COMPANY
+ ip address 10.0.8.4 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip nhrp authentication MSK1001
+ ip nhrp map multicast 77.100.10.41
+ ip nhrp map 10.0.8.1 77.100.10.41
+ ip nhrp network-id 8
+ ip nhrp nhs 10.0.8.1
+ ip nhrp shortcut
+ ip tcp adjust-mss 1360
+ ip ospf network broadcast
+ ip ospf priority 0
+ ip ospf 1 area 8
+ tunnel source Ethernet0/0
+ tunnel mode gre multipoint
+ tunnel protection ipsec profile IKEV2-DMVPN
+!
+interface Ethernet0/0
+ description to_Triada26
+ ip address 90.7.18.123 255.255.255.254
+ ip nat outside
+ ip virtual-reassembly in
+ ipv6 address FE80::28 link-local
+ ipv6 address 203A:88A1:A789:1::7:1/112
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_Triada25
+ ip address 90.7.18.121 255.255.255.254
+ ip nat outside
+ ip virtual-reassembly in
+ ipv6 address FE80::28 link-local
+ ipv6 address 203A:88A1:A789:1::6:1/112
+ ipv6 enable
+!
+interface Ethernet0/2
+ no ip address
+ ipv6 address FE80::28 link-local
+ ipv6 enable
+!
+interface Ethernet0/2.30
+ description Client30
+ encapsulation dot1Q 30
+ ip address 172.16.30.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly in
+ ip policy route-map Ext_R26
+ ipv6 address FE80::28:30 link-local
+ ipv6 address 203A:BB8A:D701:61::1/64
+ ipv6 enable
+ ipv6 nd other-config-flag
+ ipv6 dhcp server R28_Stateless
+ ipv6 policy route-map Ext_R26
+!
+interface Ethernet0/2.31
+ description Client31
+ encapsulation dot1Q 31
+ ip address 172.16.31.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly in
+ ip policy route-map Ext_R25
+ ipv6 address FE80::28:31 link-local
+ ipv6 address 203A:BB8A:D701:62::1/64
+ ipv6 enable
+ ipv6 nd other-config-flag
+ ipv6 dhcp server R28_Stateless
+ ipv6 policy route-map Ext_R25v6
+!
+interface Ethernet0/2.88
+ description Mgmt_SW29
+ encapsulation dot1Q 88
+ ip address 192.168.0.217 255.255.255.252
+ ipv6 address FE80::28:88 link-local
+ ipv6 address 203A:BB8A:D701:8888::1111:1/112
+ ipv6 enable
+!
+interface Ethernet0/2.999
+ description Native
+ encapsulation dot1Q 999 native
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+router ospf 1
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 9 interface Ethernet0/0 overload
+ip nat inside source static 192.168.0.28 90.7.18.2 extendable
+ip nat inside source static 172.16.30.2 90.7.18.3
+ip route 0.0.0.0 0.0.0.0 90.7.18.120
+ip route 0.0.0.0 0.0.0.0 90.7.18.122
+!
+ip sla 1
+ icmp-echo 90.7.18.120 source-ip 90.7.18.121
+ threshold 1000
+ timeout 1500
+ frequency 3
+ip sla schedule 1 life forever start-time now
+ip sla 2
+ icmp-echo 90.7.18.122 source-interface Ethernet0/0
+ threshold 1000
+ timeout 1500
+ frequency 3
+ip sla schedule 2 life forever start-time now
+ipv6 route ::/0 203A:88A1:A789:1::6:2
+ipv6 route ::/0 203A:88A1:A789:1::7:2
+!
+route-map Ext_R25v6 permit 10
+ match ipv6 address Ext_net31
+ set ipv6 next-hop 203A:88A1:A789:1::6:2
+!
+route-map Ext_R26 permit 10
+ match ip address 100
+ match ipv6 address Ext_net30
+ set ip next-hop verify-availability 90.7.18.122 10 track 2
+ set ipv6 next-hop 203A:88A1:A789:1::7:2
+!
+route-map Ext_R25 permit 10
+ match ip address 101
+ set ip next-hop verify-availability 90.7.18.120 10 track 1
+!
+!
+access-list 1 permit 172.16.30.0 0.0.0.255
+access-list 2 permit 172.16.31.0 0.0.0.255
+access-list 9 deny   172.16.30.0 0.0.0.3
+access-list 9 deny   172.16.31.0 0.0.0.3
+access-list 9 permit 172.16.31.0 0.0.0.255
+access-list 9 permit 172.16.30.0 0.0.0.255
+access-list 100 permit ip 172.16.30.0 0.0.0.255 any
+access-list 100 remark Net30
+access-list 101 permit ip 172.16.31.0 0.0.0.255 any
+access-list 101 remark Net31
+!
+ipv6 access-list Ext_net30
+ permit ipv6 203A:BB8A:D701:61::/64 any
+!
+ipv6 access-list Ext_net31
+ permit ipv6 203A:BB8A:D701:62::/64 any
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 00071A150754
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ access-class 1 in
+ exec-timeout 15 0
+ password 7 045802150C2E
+ logging synchronous
+ login
+ transport input telnet
+!
+!
+end
