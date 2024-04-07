@@ -521,6 +521,10 @@ R15#
 ````
 Передаваемы данные по DMVPN шифруются.
 
+Так-же сохранилась связанность между Spoke
+
+![ping Spoke_to_Spoke with IKEVv2.png](ping%20Spoke_to_Spoke%20with%20IKEVv2.png)
+
 В дополнение настроим центр сертфикации на R15 офиса Москва.
 ````
 R15(config)#ip domain-name MSK1001.ru
