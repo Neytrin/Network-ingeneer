@@ -48,25 +48,25 @@
 |          |          | e0/2.21   | to_SW1      | 192.168.21.2  | 255.255.255.0   |             | 2022:a304:20bf:21::1/64       | FE80::1:3 |                     |
 |          |          | e0/2.99   | MGMT_SW1    | 192.168.2.2   | 255.255.255.0   |             |                               |           |                     |
 |          |          | e0/3.20   | to_SW2      | 192.168.20.2  | 255.255.255.0   |             | 2022:a304:20bf:20::1/64       | FE80::2:3 |                     |
-|          |          | e0/3.99   | MGMT_SW2    | 192.168.2.4   | 255.255.255.0   |             |                               |           |                     |
+|          |          | e0/3.100  | MGMT_SW2    | 192.168.3.2   | 255.255.255.0   |             |                               |           |                     |
 |          |          | e1/0      | to_R2       | 192.168.0.34  | 255.255.255.252 |             | 2022:a304:20bf::9:3:2/96      | FE80::3   |                     |
 |          |          | Loopback0 |             | 192.168.1.3   | 255.255.255.255 |             | 2022:a304:20bf:8::3/128       |           |                     |
 |          | R4       | e0/0      | to_R2       | 192.168.0.30  | 255.255.255.252 |             | 2022:a304:20bf::8:4:2/96      | FE80::4   |                     |
 |          |          | e0/1      | to_R3       | 192.168.0.38  | 255.255.255.252 |             | 2022:a304:20bf::a:4:3/96      | FE80::4   |                     |
 |          |          | e0/2.20   | to_SW2      | 192.168.20.3  | 255.255.255.0   |             | 2022:a304:20bf:20::2/64       | FE80::2:4 |                     |
-|          |          | e0/2.99   | MGMT_SW2    | 192.168.2.3   | 255.255.255.0   |             |                               |           |                     |
+|          |          | e0/2.100  | MGMT_SW2    | 192.168.3.3   | 255.255.255.0   |             |                               |           |                     |
 |          |          | e0/3.21   | to_SW1      | 192.168.21.3  | 255.255.255.0   |             | 2022:a304:20bf:21::2/64       | FE80::1:4 |                     |
-|          |          | e0/3.99   | MGMT_SW1    | 192.168.2.5   | 255.255.255.0   |             |                               |           |                     |
+|          |          | e0/3.99   | MGMT_SW1    | 192.168.2.3   | 255.255.255.0   |             |                               |           |                     |
 |          |          | e1/0      | to_R1       | 192.168.0.26  | 255.255.255.252 |             | 2022:a304:20bf::7:4:1/96      | FE80::4   |                     |
 |          |          | Loopback0 |             | 192.168.1.4   | 255.255.255.255 |             | 2022:a304:20bf:8::4/128       |           |                     |
 |          | SW1      | e0/0      | to_R3       |               |                 |             |                               |           |                     |
 |          |          | e0/1      | to_R4       |               |                 |             |                               |           |                     |
 |          |          | VLAN10    | Customer1   |               |                 |             |                               |           |                     |
-|          |          | VLAN99    | MGMT        | 192.168.2.6   | 255.255.255.0   | 192.168.2.1 | 2022:a304:20bf:8::1:1/128     |           |                     |
+|          |          | VLAN99    | MGMT        | 192.168.2.4   | 255.255.255.0   | 192.168.2.1 | 2022:a304:20bf:8::1:1/128     |           |                     |
 |          | SW2      | e0/0      | to_R4       |               |                 |             |                               |           |                     |
 |          |          | e0/1      | to_R3       |               |                 |             |                               |           |                     |
 |          |          | VLAN20    | Customer2   |               |                 |             |                               |           |                     |
-|          |          | VLAN99    | MGMT        | 192.168.2.7   | 255.255.255.0   | 192.168.2.1 | 2022:a304:20bf:8::1:2/128     |           |                     |
+|          |          | VLAN100   | MGMT        | 192.168.3.4   | 255.255.255.0   | 192.168.3.1 | 2022:a304:20bf:8::1:2/128     |           |                     |
 |          | VPC1     | NIC       |             | DHCP          |                 |             |                               |           |                     |
 |          | VPC7     | NIC       |             | DHCP          |                 |             |                               |           |                     |
 |          | R5       | e0/0      | to_R2       | 192.168.0.6   | 255.255.255.252 |             | 2022:a304:20bf::2:5:2/96      | FE80::5   |                     |
@@ -141,6 +141,8 @@
 | ISP2     | R14      | e0/0      | to_R1       | 99.13.77.1    | 255.255.255.254 |             | 2022:a304:20bf::2/112         | FE80::14  | 135.200.13.0/24     |
 |          |          | e0/1      | to_R35      | 135.200.13.51 | 255.255.255.254 |             | 2022:a304:11aa:1::1:20/112    | FE80::14  | 2022:a304:11aa::/48 |
 |          |          | Loopback0 |             | 10.10.10.14   | 255.255.255.255 |             | 2022:a304:11aa:8::14/128      |
+
+
 
 
 2. Для всех сетевых элементов выполнить первичные настройки, интерфейсам присвоить IP адреса.
@@ -466,16 +468,97 @@ SW1#
 track 1 interface Ethernet0/0 line-protocol
 track 2 interface Ethernet0/1 line-protocol
 !
-
+interface Ethernet0/2
+ description to_SW1
+ no ip address
 !
-
+interface Ethernet0/2.21
+ description to_Client21
+ encapsulation dot1Q 21
+ ip address 192.168.21.2 255.255.255.0
+ glbp 1 ip 192.168.21.1
+ glbp 1 priority 120
+ glbp 1 preempt
+ glbp 1 weighting 140 lower 100 upper 115
+ glbp 1 load-balancing host-dependent
+ glbp 1 authentication md5 key-string 7 1531021F0725
+ glbp 1 name ipv4_Client21
+ glbp 1 weighting track 1 decrement 30
+ glbp 1 weighting track 2 decrement 20
+ glbp 2 ipv6 FE80::1:1
+ glbp 2 priority 120
+ glbp 2 preempt
+ glbp 2 weighting 140 lower 100 upper 115
+ glbp 2 load-balancing host-dependent
+ glbp 2 authentication md5 key-string 7 1531021F0725
+ glbp 2 name IPv6_Client21
+ glbp 2 weighting track 1 decrement 30
+ glbp 2 weighting track 2 decrement 20
+ ipv6 address FE80::1:3 link-local
+ ipv6 address 2022:A304:20BF:21::1/64
+ ipv6 enable
+!
+interface Ethernet0/2.99
+ description MGMT_SW1
+ encapsulation dot1Q 99
+ ip address 192.168.2.2 255.255.255.0
+ glbp 99 ip 192.168.2.1
+ glbp 99 priority 120
+ glbp 99 preempt
+ no glbp 99 load-balancing
+ glbp 99 authentication md5 key-string 7 1531021F0725
+ glbp 99 name IPv4_MGMT
+!
+interface Ethernet0/3
+ description to_SW2
+ no ip address
+!
+interface Ethernet0/3.20
+ description to_Client20
+ encapsulation dot1Q 20
+ ip address 192.168.20.2 255.255.255.0
+ glbp 1 ip 192.168.20.1
+ glbp 1 priority 120
+ glbp 1 preempt
+ glbp 1 weighting 140 lower 100 upper 115
+ glbp 1 load-balancing host-dependent
+ glbp 1 authentication md5 key-string 7 1531021F0725
+ glbp 1 name ipv4_Client20
+ glbp 1 weighting track 1 decrement 30
+ glbp 1 weighting track 2 decrement 20
+ glbp 2 ipv6 FE80::2:1
+ glbp 2 priority 120
+ glbp 2 preempt
+ glbp 2 weighting 140 lower 100 upper 115
+ glbp 2 load-balancing host-dependent
+ glbp 2 authentication md5 key-string 7 1531021F0725
+ glbp 2 name IPv6_Client20
+ glbp 2 weighting track 1 decrement 30
+ glbp 2 weighting track 2 decrement 20
+ ipv6 address FE80::2:3 link-local
+ ipv6 address 2022:A304:20BF:20::1/64
+ ipv6 enable
+!
+interface Ethernet0/3.100
+ description MGMT_SW2
+ encapsulation dot1Q 100
+ ip address 192.168.3.2 255.255.255.0
+ glbp 100 ip 192.168.3.1
+ glbp 100 priority 120
+ glbp 100 preempt
+ no glbp 100 load-balancing
+ glbp 100 authentication md5 key-string 7 1531021F0725
+!
 ````
 Для отслеживания состояния портов e0/0 и e0/1 созданы track. Настройка произведена так, что изменение состояний порта e0/0 будет приводить к понижению веса на 30, а для 
 e0/1 - на 20. Пороги весов настроены так, что отключение одного из этих портров не изменит роли R3 как active forwarder. В случае когда оба порта перейдут в состояние down 
 весь трафик будет перенаправлен через R4. Порог веса upper подобран таки образом, что R3 cнова будет участвовать в процессе распределения трафика только при включении порта e0/0, либо при 
-включениии обоих портов e0/0 и e0/1. Поэтому восстановить линк по интерфейсу e0/0 будет приоритетом. Таймеры оставлены по умолчанию. 
+включениии обоих портов e0/0 и e0/1. Поэтому восстановить линк по интерфейсу e0/0 будет приоритетом. 
 
+Таймеры оставлены по умолчанию.
+Планируем настроить NAT, поэтому для клиентских сетей выбрана балансировка host-dependent. Для сетей доступа к коммуторам балансировка отключена.
 
+#### Настройка DHCP серверов.
 
 
 
