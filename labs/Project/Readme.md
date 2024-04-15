@@ -356,7 +356,7 @@ interface Ethernet1/3
  shutdown
 !
 interface Vlan99
- ip address 192.168.2.4 255.255.255.0
+ ip address 192.168.2.6 255.255.255.0
  ipv6 address 2022:A304:20BF:8::1:1/128
 !
 ip default-gateway 192.168.2.1
