@@ -45,8 +45,8 @@ ipv6 cef
 multilink bundle-name authenticated
 !
 !
-key chain EIGRP
- key 1
+учше
+
   key-string 7 072C285F4D0659
   cryptographic-algorithm hmac-sha-256
 !
