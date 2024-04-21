@@ -11,14 +11,15 @@
 1. Разработать схему лабораторного стенда, задокументировать адресное пространство.
 2. Для всех сетевых элементов выполнить первичные настройки, интерфейсам присвоить IP адреса.
 3. Настроить сеть офиса оператора
-- Настроить крммутаторы SW1 и SW2
+- Настроить коммутаторы SW1 и SW2
 - Настроить протокол GLBP на R3 и R4
 - Настройка DHCP сервера на R3 и R4
 - Настроить протокол OSPF
 - На R1 и R2 настроить маршруты по-умолчанию.
 4. Настроить EIGRP на сети провайдера ISP2.
 5. Настроить eBGP между оператором и ISP, а так-же между ISP1 и ISP2.
-6. 
+6. Настроить iBGP в сети офиса орератора
+7. Настроить iBGP в сети ISP2 с разбиением на 2-а кластера с двумя RR в каждой. 
 
 
 
@@ -1141,5 +1142,167 @@ R31#
 ````
 #### Настроить eBGP между оператором и ISP, а так-же между ISP1 и ISP2.
 Конфигурацию покажем на примере R1 и R2 оператора.
+
+R1 в сторону ISP 
+```
+R1#sh run | sec bgp
+router bgp 1000
+ bgp router-id 192.168.1.1
+ bgp log-neighbor-changes
+ neighbor 2022:A304:20BF::2 remote-as 120
+ neighbor 99.13.77.1 remote-as 120
+ !
+ address-family ipv4
+  network 99.13.77.0 mask 255.255.255.0
+  no neighbor 2022:A304:20BF::2 activate
+  neighbor 99.13.77.1 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network 22:A304:20BF::/48
+  neighbor 2022:A304:20BF::2 activate
+ exit-address-family
+R1#
 ````
+R2 в сторону ISP2
 ````
+R2#sh run | sec bgp
+router bgp 1000
+ bgp router-id 192.168.1.2
+ bgp log-neighbor-changes
+ neighbor 2022:ABCC:318:ABAB:18::40 remote-as 100
+ neighbor 110.1.22.9 remote-as 100
+ !
+ address-family ipv4
+  network 99.13.77.0 mask 255.255.255.0
+  no neighbor 2022:ABCC:318:ABAB:18::40 activate
+  neighbor 110.1.22.9 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network 22:A304:20BF::/48
+  neighbor 2022:ABCC:318:ABAB:18::40 activate
+ exit-address-family
+R2#
+````
+Покажем установление соседства на настроенном R1 по протоколу BGP.
+````
+R1#sh ip bgp nei
+BGP neighbor is 99.13.77.1,  remote AS 120, external link
+  BGP version 4, remote router ID 10.10.10.14
+  BGP state = Established, up for 03:45:12
+  Last read 00:00:40, last write 00:00:17, hold time is 180, keepalive interval is 60 seconds
+  Neighbor sessions:
+    1 active, is not multisession capable (disabled)
+  Neighbor capabilities:
+    Route refresh: advertised and received(new)
+    Four-octets ASN Capability: advertised and received
+    Address family IPv4 Unicast: advertised and received
+    Enhanced Refresh Capability: advertised and received
+    Multisession Capability:
+    Stateful switchover support enabled: NO for session 1
+  Message statistics:
+    InQ depth is 0
+    OutQ depth is 0
+
+                         Sent       Rcvd
+    Opens:                  1          1
+    Notifications:          0          0
+    Updates:                1          1
+    Keepalives:           250        250
+    Route Refresh:          0          0
+    Total:                252        252
+  Default minimum time between advertisement runs is 30 seconds
+
+ For address family: IPv4 Unicast
+  Session: 99.13.77.1
+  BGP table version 1, neighbor version 1/0
+  Output queue size : 0
+  Index 1, Advertise bit 0
+  1 update-group member
+  Slow-peer detection is disabled
+  Slow-peer split-update-group dynamic is disabled
+  Interface associated: Ethernet0/3
+                                 Sent       Rcvd
+  Prefix activity:               ----       ----
+    Prefixes Current:               0          0
+    Prefixes Total:                 0          0
+    Implicit Withdraw:              0          0
+    Explicit Withdraw:              0          0
+    Used as bestpath:             n/a          0
+    Used as multipath:            n/a          0
+
+                                   Outbound    Inbound
+  Local Policy Denied Prefixes:    --------    -------
+    Total:                                0          0
+  Number of NLRIs in the update sent: max 0, min 0
+  Last detected as dynamic slow peer: never
+  Dynamic slow peer recovered: never
+  Refresh Epoch: 1
+  Last Sent Refresh Start-of-rib: never
+  Last Sent Refresh End-of-rib: never
+  Last Received Refresh Start-of-rib: never
+  Last Received Refresh End-of-rib: never
+                                       Sent       Rcvd
+        Refresh activity:              ----       ----
+          Refresh Start-of-RIB          0          0
+          Refresh End-of-RIB            0          0
+
+  Address tracking is enabled, the RIB does have a route to 99.13.77.1
+  Connections established 1; dropped 0
+  Last reset never
+  Transport(tcp) path-mtu-discovery is enabled
+  Graceful-Restart is disabled
+Connection state is ESTAB, I/O status: 1, unread input bytes: 0
+Connection is ECN Disabled, Mininum incoming TTL 0, Outgoing TTL 1
+Local host: 99.13.77.0, Local port: 16570
+Foreign host: 99.13.77.1, Foreign port: 179
+Connection tableid (VRF): 0
+Maximum output segment queue size: 50
+
+Enqueued packets for retransmit: 0, input: 0  mis-ordered: 0 (0 bytes)
+
+Event Timers (current time is 0xDDCCB78):
+Timer          Starts    Wakeups            Next
+Retrans           252          0             0x0
+TimeWait            0          0             0x0
+AckHold           251        245             0x0
+SendWnd             0          0             0x0
+KeepAlive           0          0             0x0
+GiveUp              0          0             0x0
+PmtuAger        12541      12540       0xDDCCD01
+DeadWait            0          0             0x0
+Linger              0          0             0x0
+ProcessQ            0          0             0x0
+
+iss: 3268355561  snduna: 3268360392  sndnxt: 3268360392
+irs: 1575082409  rcvnxt: 1575087240
+
+sndwnd:  15947  scale:      0  maxrcvwnd:  16384
+rcvwnd:  15947  scale:      0  delrcvwnd:    437
+
+SRTT: 1000 ms, RTTO: 1003 ms, RTV: 3 ms, KRTT: 0 ms
+minRTT: 1 ms, maxRTT: 1000 ms, ACK hold: 200 ms
+uptime: 13512467 ms, Sent idletime: 17447 ms, Receive idletime: 17242 ms
+Status Flags: active open
+Option Flags: nagle, path mtu capable
+IP Precedence value : 6
+
+Datagrams (max data segment is 1460 bytes):
+Rcvd: 503 (out of order: 0), with data: 252, total data bytes: 4830
+Sent: 504 (retransmit: 0, fastretransmit: 0, partialack: 0, Second Congestion: 0), with data: 252, total data bytes: 4830
+
+ Packets received in fast path: 0, fast processed: 0, slow path: 0
+ fast lock acquisition failures: 0, slow path: 0
+TCP Semaphore      0xE380DAB4  FREE
+
+R1#
+````
+Проверим маршруты в таблице BGP R1 полученные от R14. Но до этого создадим интерфейсы Loopback 1 и статические машруты
+на обоих роутерах, в противном случае при отсутствии маршрута к этой сети таблица BGP будут пустыми.
+Через интерфейсы Loopback1 будем проверять IP связанность. Настройка на примере R1.
+
+
+
+#### 6. Настроить iBGP в сети офиса орератора.
+
