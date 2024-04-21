@@ -18,7 +18,7 @@
 - На R1 и R2 настроить маршруты по-умолчанию.
 4. Настроить EIGRP на сети провайдера ISP2.
 5. Настроить eBGP между оператором и ISP, а так-же между ISP1 и ISP2.
-6. Настроить iBGP в сети офиса орератора
+6. Настроить iBGP между R1 и R2 в сети офиса орератора
 7. Настроить iBGP в сети ISP2 с разбиением на 2-а кластера с двумя RR в каждой. 
 
 
@@ -1302,7 +1302,82 @@ R1#
 на обоих роутерах, в противном случае при отсутствии маршрута к этой сети таблица BGP будут пустыми.
 Через интерфейсы Loopback1 будем проверять IP связанность. Настройка на примере R1.
 
+Так на R14 ISP1 настроим интерфейс Loopback1 и создадим статический маршрут в сеть провайдера ISP1.
+````
+!
+interface Loopback1
+ ip address 135.200.13.8 255.255.255.255
+ ipv6 address 2022:A304:11AA::8888/128
+!
+ip route 135.200.13.0 255.255.255.0 Null0
+!
+ipv6 route 2022:A304:11AA::/48 Null0
+````
+На R37 в сети ISP2
+````
+interface Loopback1
+ ip address 110.1.22.8 255.255.255.0
+ ipv6 address 2022:ABCC:318::8888/128
+!
+ip route 110.1.22.0 255.255.255.0 Null0
+!
+ipv6 route 2022:ABCC:318::/48 Null0
+````
+а так-же распространим информацию об интерфейсе Loopback1 по EIGRP
+````
+R37(config)#router eigrp ISP2
+R37(config-router)#address-family ipv4 unicast autonomous-system 1
+R37(config-router-af)#
+R37(config-router-af)#network 110.1.22.8 0.0.0.0
+````
+Покажем маршруты IPv4 BGP добавленные в таблицу маршрутизации BGP
+
+для R1
+````
+R1#sh ip route bgp
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override
+
+Gateway of last resort is 99.13.77.1 to network 0.0.0.0
+
+      110.0.0.0/24 is subnetted, 1 subnets
+B        110.1.22.0 [20/0] via 99.13.77.1, 01:30:28
+      135.200.0.0/24 is subnetted, 1 subnets
+B        135.200.13.0 [20/0] via 99.13.77.1, 02:34:54
+R1#
+````
+и для R2
+````
+R2#sh ip bgp
+BGP table version is 2, local router ID is 192.168.1.2
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
+              x best-external, a additional-path, c RIB-compressed,
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
+
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>  110.1.22.0/24    110.1.22.9         2048640             0 100 i
+R2#
+````
+Видим, что на R1 получены маршруты в сети ISP1 и ISP2 в то время как на R2 только в сеть ISP2. 
+Маршрут в сеть ISP2 появится если настроим протокол iBGP на сети ISP2 ну или на сети оператора.
+
+#### 6. Настроить iBGP между R1 и R2 в сети офиса орератора.
+
+В качестве интерфейсов для установления соседства по BGP использовать TCP сессию установленную между интерфейсами Loopback0
+роутеров R1 и R2. Виртуальный сетевой интерфейс будет доступен всегда, а надежность связанности между Loopback интерфейсами R1 и R2
+обеспечивается избыточностью связей Backbone Area0 OSPF.
+
+Настройка на примере R1
+````
 
 
-#### 6. Настроить iBGP в сети офиса орератора.
-
+````
