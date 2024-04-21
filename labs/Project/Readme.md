@@ -17,7 +17,8 @@
 - Настроить протокол OSPF
 - На R1 и R2 настроить маршруты по-умолчанию.
 4. Настроить EIGRP на сети провайдера ISP2.
-5. 
+5. Настроить eBGP между оператором и ISP, а так-же между ISP1 и ISP2.
+6. 
 
 
 
@@ -953,21 +954,192 @@ ipv6 route ::/0 2022:ABCC:318:8::36
 интерфейсов Loopback0.
 
 Покажем настройку на примере R31.
+Сначала создаем цепочку ключей, настроил так, что имеется один ключ без ограничения по времени.
 ````
-
-
+key chain EIGRP
+ key 1
+  key-string 7 01100F175804
+  cryptographic-algorithm hmac-sha-256
 ````
+Настройка EIGRP
+````
+router eigrp ISP2
+ !
+ address-family ipv4 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/0
+   authentication mode hmac-sha-256 7 1511021F0725
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   authentication mode hmac-sha-256 7 05080F1C2243
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/2
+   authentication mode hmac-sha-256 7 00071A150754
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet1/0
+   authentication mode hmac-sha-256 7 13061E010803
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  network 10.10.0.0 0.0.0.255
+  network 10.10.8.31 0.0.0.0
+  eigrp router-id 10.10.8.31
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/0
+   authentication mode hmac-sha-256 7 1511021F0725
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   authentication mode hmac-sha-256 7 0822455D0A16
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/2
+   authentication mode hmac-sha-256 7 121A0C041104
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet1/0
+   authentication mode hmac-sha-256 7 094F471A1A0A
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  eigrp router-id 10.10.8.31
+ exit-address-family
+!
+````
+Суммаризацию маршрутов не использовалась.
 
+Результаты настройки покажем на примере установленных соседств EIGRP на R31.
+````
+R31#sh ip eigrp neighbors
+EIGRP-IPv4 VR(ISP2) Address-Family Neighbors for AS(1)
+H   Address                 Interface              Hold Uptime   SRTT   RTO  Q  Seq
+                                                   (sec)         (ms)       Cnt Num
+2   10.10.0.10              Et1/0                    14 14:12:26    5   100  0  35
+3   10.10.0.26              Et0/2                    12 14:14:49    6   100  0  13
+1   10.10.0.2               Et0/0                    13 14:51:54    3   100  0  33
+0   10.10.0.6               Et0/1                    13 15:04:29    1   100  0  46
+R31#sh ipv6 eigrp neighbors
+EIGRP-IPv6 VR(ISP2) Address-Family Neighbors for AS(1)
+H   Address                 Interface              Hold Uptime   SRTT   RTO  Q  Seq
+                                                   (sec)         (ms)       Cnt Num
+3   Link-local address:     Et0/2                    11 14:14:57    7   100  0  10
+    FE80::35
+2   Link-local address:     Et1/0                    13 14:29:04    4   100  0  21
+    FE80::34
+1   Link-local address:     Et0/0                    10 14:52:01    2   100  0  24
+    FE80::33
+0   Link-local address:     Et0/1                    14 15:04:37    5   100  0  30
+    FE80::32
+R31#
+````
+Полученные на R31 маршруты по по EIGRP.
+````
+R31#sh ip route eigrp
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override
 
+Gateway of last resort is not set
 
-
-
-
-
-
-
-
-
-
-
-
+      10.0.0.0/8 is variably subnetted, 22 subnets, 2 masks
+D        10.10.0.12/30 [90/1536000] via 10.10.0.10, 14:14:13, Ethernet1/0
+                       [90/1536000] via 10.10.0.6, 14:14:13, Ethernet0/1
+D        10.10.0.16/30 [90/1536000] via 10.10.0.6, 14:14:11, Ethernet0/1
+                       [90/1536000] via 10.10.0.2, 14:14:11, Ethernet0/0
+D        10.10.0.20/30 [90/1536000] via 10.10.0.10, 14:14:11, Ethernet1/0
+                       [90/1536000] via 10.10.0.2, 14:14:11, Ethernet0/0
+D        10.10.0.28/30 [90/1536000] via 10.10.0.26, 13:44:56, Ethernet0/2
+D        10.10.0.32/30 [90/1536000] via 10.10.0.6, 13:44:56, Ethernet0/1
+D        10.10.0.36/30 [90/1536000] via 10.10.0.2, 14:14:12, Ethernet0/0
+D        10.10.0.40/30 [90/1536000] via 10.10.0.10, 14:14:11, Ethernet1/0
+D        10.10.8.32/32 [90/1024640] via 10.10.0.6, 14:14:11, Ethernet0/1
+D        10.10.8.33/32 [90/1024640] via 10.10.0.2, 14:08:54, Ethernet0/0
+D        10.10.8.34/32 [90/1024640] via 10.10.0.10, 14:14:11, Ethernet1/0
+D        10.10.8.35/32 [90/1024640] via 10.10.0.26, 14:16:34, Ethernet0/2
+D        10.10.8.36/32 [90/1536640] via 10.10.0.26, 13:44:56, Ethernet0/2
+                       [90/1536640] via 10.10.0.6, 13:44:56, Ethernet0/1
+D        10.10.8.37/32 [90/1536640] via 10.10.0.10, 13:41:59, Ethernet1/0
+                       [90/1536640] via 10.10.0.2, 13:41:59, Ethernet0/0
+R31# sh ipv6 route eigrp
+IPv6 Routing Table - default - 25 entries
+Codes: C - Connected, L - Local, S - Static, U - Per-user Static route
+       B - BGP, HA - Home Agent, MR - Mobile Router, R - RIP
+       H - NHRP, I1 - ISIS L1, I2 - ISIS L2, IA - ISIS interarea
+       IS - ISIS summary, D - EIGRP, EX - EIGRP external, NM - NEMO
+       ND - ND Default, NDp - ND Prefix, DCE - Destination, NDr - Redirect
+       O - OSPF Intra, OI - OSPF Inter, OE1 - OSPF ext 1, OE2 - OSPF ext 2
+       ON1 - OSPF NSSA ext 1, ON2 - OSPF NSSA ext 2, la - LISP alt
+       lr - LISP site-registrations, ld - LISP dyn-eid, a - Application
+D   2022:A304:11AA:1::1:0/112 [90/1536000]
+     via FE80::35, Ethernet0/2
+D   2022:ABCC:318:1:0:3::/96 [90/1536000]
+     via FE80::32, Ethernet0/1
+     via FE80::34, Ethernet1/0
+D   2022:ABCC:318:1:0:4::/96 [90/1536000]
+     via FE80::32, Ethernet0/1
+     via FE80::33, Ethernet0/0
+D   2022:ABCC:318:1:0:5::/96 [90/1536000]
+     via FE80::33, Ethernet0/0
+     via FE80::34, Ethernet1/0
+D   2022:ABCC:318:1:0:7::/96 [90/1536000]
+     via FE80::35, Ethernet0/2
+D   2022:ABCC:318:1:0:8::/96 [90/1536000]
+     via FE80::32, Ethernet0/1
+D   2022:ABCC:318:1:0:9::/96 [90/1536000]
+     via FE80::33, Ethernet0/0
+D   2022:ABCC:318:1:0:A::/96 [90/1536000]
+     via FE80::34, Ethernet1/0
+D   2022:ABCC:318:8::32/128 [90/1024640]
+     via FE80::32, Ethernet0/1
+D   2022:ABCC:318:8::33/128 [90/1024640]
+     via FE80::32, Ethernet0/1
+     via FE80::33, Ethernet0/0
+D   2022:ABCC:318:8::34/128 [90/1024640]
+     via FE80::34, Ethernet1/0
+D   2022:ABCC:318:8::35/128 [90/1024640]
+     via FE80::35, Ethernet0/2
+D   2022:ABCC:318:8::36/128 [90/1536640]
+     via FE80::35, Ethernet0/2
+     via FE80::32, Ethernet0/1
+D   2022:ABCC:318:8::37/128 [90/1536640]
+     via FE80::33, Ethernet0/0
+     via FE80::34, Ethernet1/0
+D   2022:ABCC:318:ABAB:18::/112 [90/2048000]
+     via FE80::35, Ethernet0/2
+     via FE80::32, Ethernet0/1
+R31#
+````
+#### Настроить eBGP между оператором и ISP, а так-же между ISP1 и ISP2.
+Конфигурацию покажем на примере R1 и R2 оператора.
+````
+````
