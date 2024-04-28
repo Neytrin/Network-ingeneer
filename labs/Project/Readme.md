@@ -18,8 +18,10 @@
 - На R1 и R2 настроить маршруты по-умолчанию.
 4. Настроить EIGRP на сети провайдера ISP2.
 5. Настроить eBGP между оператором и ISP, а так-же между ISP1 и ISP2.
-6. Настроить iBGP между R1 и R2 в сети офиса орератора
-7. Настроить iBGP в сети ISP2 с разбиением на 2-а кластера с двумя RR в каждой. 
+6. Настроить iBGP между R1 и R2 в сети офиса оператора
+7. Настроить iBGP в сети ISP2 с разбиением на 2-а кластера с двумя RR в каждой.
+8. Манипуляция с атрибутами BGP в сети офиса оператора.
+9. Настроить NAT на R1 и R2 в сети оператора
 
 
 
@@ -1378,6 +1380,348 @@ R2#
 
 Настройка на примере R1
 ````
+R1(config)#router bgp 1000
+R1(config-router)#neighbor 192.168.1.2 remote-as 1000
+R1(config-router)#neighbor 192.168.1.2 update-source loopback 0
+R1(config-router)#neighbor 2022:A304:20BF:8::2 remote-as 1000
+R1(config-router)# neighbor 2022:A304:20BF:8::2 update-source loopback 0
+R1(config-router)#address-family ipv4
+R1(config-router-af)#neighbor 192.168.1.2 next-hop-self
+R1(config-router-af)#address-family ipv6
+R1(config-router-af)#neighbor 2022:A304:20BF:8::2 activate
+R1(config-router-af)#neighbor 2022:A304:20BF:8::2 next-hop-self
+````
+Отобразим на R2 установленное соседство по iBGP с R1
+````
+R2#sh ip bgp nei 192.168.1.1
+BGP neighbor is 192.168.1.1,  remote AS 1000, internal link
+  BGP version 4, remote router ID 192.168.1.1
+  BGP state = Established, up for 00:07:54
+  Last read 00:00:45, last write 00:00:16, hold time is 180, keepalive interval is 60 seconds
+  Neighbor sessions:
+    1 active, is not multisession capable (disabled)
+  Neighbor capabilities:
+    Route refresh: advertised and received(new)
+    Four-octets ASN Capability: advertised and received
+    Address family IPv4 Unicast: advertised and received
+    Enhanced Refresh Capability: advertised and received
+    Multisession Capability:
+    Stateful switchover support enabled: NO for session 1
+  Message statistics:
+    InQ depth is 0
+    OutQ depth is 0
 
+                         Sent       Rcvd
+    Opens:                  1          1
+    Notifications:          0          0
+    Updates:                4          4
+    Keepalives:            10         10
+    Route Refresh:          0          0
+    Total:                 15         15
+  Default minimum time between advertisement runs is 0 seconds
+
+ For address family: IPv4 Unicast
+  Session: 192.168.1.1
+  BGP table version 3, neighbor version 3/0
+  Output queue size : 0
+  Index 3, Advertise bit 1
+  3 update-group member
+  NEXT_HOP is always this router for eBGP paths
+  Slow-peer detection is disabled
+  Slow-peer split-update-group dynamic is disabled
+  Interface associated: (none)
+                                 Sent       Rcvd
+  Prefix activity:               ----       ----
+    Prefixes Current:               1          1 (Consumes 80 bytes)
+    Prefixes Total:                 1          2
+    Implicit Withdraw:              0          0
+    Explicit Withdraw:              1          1
+    Used as bestpath:             n/a          1
+    Used as multipath:            n/a          0
+
+                                   Outbound    Inbound
+  Local Policy Denied Prefixes:    --------    -------
+    Bestpath from this peer:              1        n/a
+    Total:                                1          0
+  Number of NLRIs in the update sent: max 1, min 0
+  Last detected as dynamic slow peer: never
+  Dynamic slow peer recovered: never
+  Refresh Epoch: 1
+  Last Sent Refresh Start-of-rib: never
+  Last Sent Refresh End-of-rib: never
+  Last Received Refresh Start-of-rib: never
+  Last Received Refresh End-of-rib: never
+                                       Sent       Rcvd
+        Refresh activity:              ----       ----
+          Refresh Start-of-RIB          0          0
+          Refresh End-of-RIB            0          0
+
+  Address tracking is enabled, the RIB does have a route to 192.168.1.1
+  Connections established 1; dropped 0
+  Last reset never
+  Transport(tcp) path-mtu-discovery is enabled
+  Graceful-Restart is disabled
+Connection state is ESTAB, I/O status: 1, unread input bytes: 0
+Connection is ECN Disabled, Mininum incoming TTL 0, Outgoing TTL 255
+Local host: 192.168.1.2, Local port: 179
+Foreign host: 192.168.1.1, Foreign port: 25314
+Connection tableid (VRF): 0
+Maximum output segment queue size: 50
+
+Enqueued packets for retransmit: 0, input: 0  mis-ordered: 0 (0 bytes)
+
+Event Timers (current time is 0xEAE2D09):
+Timer          Starts    Wakeups            Next
+Retrans            12          0             0x0
+TimeWait            0          0             0x0
+AckHold            12          9             0x0
+SendWnd             0          0             0x0
+KeepAlive           0          0             0x0
+GiveUp              0          0             0x0
+PmtuAger            0          0             0x0
+DeadWait            0          0             0x0
+Linger              0          0             0x0
+ProcessQ            0          0             0x0
+
+iss: 3747984438  snduna: 3747984858  sndnxt: 3747984858
+irs: 3581405056  rcvnxt: 3581405480
+
+sndwnd:  15965  scale:      0  maxrcvwnd:  16384
+rcvwnd:  15961  scale:      0  delrcvwnd:    423
+
+SRTT: 798 ms, RTTO: 2221 ms, RTV: 1423 ms, KRTT: 0 ms
+minRTT: 0 ms, maxRTT: 1000 ms, ACK hold: 200 ms
+uptime: 474177 ms, Sent idletime: 16130 ms, Receive idletime: 15922 ms
+Status Flags: passive open, gen tcbs
+Option Flags: nagle, path mtu capable
+IP Precedence value : 6
+
+Datagrams (max data segment is 1460 bytes):
+Rcvd: 26 (out of order: 0), with data: 13, total data bytes: 423
+Sent: 25 (retransmit: 0, fastretransmit: 0, partialack: 0, Second Congestion: 0), with data: 13, total data bytes: 419
+
+ Packets received in fast path: 0, fast processed: 0, slow path: 0
+ fast lock acquisition failures: 0, slow path: 0
+TCP Semaphore      0xE3E512DC  FREE
+````
+Ограничимся демонстрацией таблицы BGP на R2
+````
+R2# sh ip bgp
+BGP table version is 3, local router ID is 192.168.1.2
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
+              x best-external, a additional-path, c RIB-compressed,
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
+
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>  110.1.22.0/24    110.1.22.9         2048640             0 100 i
+ *>i 135.200.13.0/24  192.168.1.1              0    100      0 120 i
+R2#
+````
+А вот и обещанный маршрут в сторону ISP1, только полученный со стороны R1 по iBGP.
+
+#### 7. Настроить iBGP в сети ISP2 с разбиением на 2-а кластера с двумя RR в каждой.
+
+Чтобы обеспечить полносвязную топологию BGP c меньшим колличеством связей. Разобьем сеть на кластер 1 (R31, R32, R35, R36)
+и кластер 2 (R33, R34, R37). Настроим R31, R32, R33, R34 как Route reflector для своих кластеров.
+
+![IBGP ISP2.png](Stend%2FIBGP%20ISP2.png)
+
+Настройку Route reflector покажем на примере R31.
+````
+R31#sh run | sec bgp
+router bgp 100
+ bgp router-id 10.10.8.31
+ bgp cluster-id 1
+ bgp log-neighbor-changes
+ neighbor iBGP_Cli peer-group
+ neighbor iBGP_Cli remote-as 100
+ neighbor iBGP_Cli update-source Loopback0
+ neighbor iBGP_RR peer-group
+ neighbor iBGP_RR remote-as 100
+ neighbor iBGP_RR update-source Loopback0
+ neighbor iBGP_RR_IPv6 peer-group
+ neighbor iBGP_RR_IPv6 remote-as 100
+ neighbor iBGP_RR_IPv6 update-source Loopback0
+ neighbor iBGP_Cli_IPv6 peer-group
+ neighbor iBGP_Cli_IPv6 remote-as 100
+ neighbor iBGP_Cli_IPv6 update-source Loopback0
+ neighbor 10.10.8.32 peer-group iBGP_RR
+ neighbor 10.10.8.33 peer-group iBGP_RR
+ neighbor 10.10.8.34 peer-group iBGP_RR
+ neighbor 10.10.8.35 peer-group iBGP_Cli
+ neighbor 10.10.8.36 peer-group iBGP_Cli
+ neighbor 2022:ABCC:318:8::32 peer-group iBGP_RR_IPv6
+ neighbor 2022:ABCC:318:8::33 peer-group iBGP_RR_IPv6
+ neighbor 2022:ABCC:318:8::34 peer-group iBGP_RR_IPv6
+ neighbor 2022:ABCC:318:8::35 peer-group iBGP_Cli_IPv6
+ neighbor 2022:ABCC:318:8::36 peer-group iBGP_Cli_IPv6
+ !
+ address-family ipv4
+  neighbor iBGP_Cli route-reflector-client
+  neighbor iBGP_Cli next-hop-self
+  neighbor iBGP_RR next-hop-self
+  neighbor 10.10.8.32 activate
+  neighbor 10.10.8.33 activate
+  neighbor 10.10.8.34 activate
+  neighbor 10.10.8.35 activate
+  neighbor 10.10.8.36 activate
+  no neighbor 2022:ABCC:318:8::32 activate
+  no neighbor 2022:ABCC:318:8::33 activate
+  no neighbor 2022:ABCC:318:8::34 activate
+  no neighbor 2022:ABCC:318:8::35 activate
+  no neighbor 2022:ABCC:318:8::36 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor iBGP_RR_IPv6 next-hop-self
+  neighbor iBGP_Cli_IPv6 route-reflector-client
+  neighbor iBGP_Cli_IPv6 next-hop-self
+  neighbor 2022:ABCC:318:8::32 activate
+  neighbor 2022:ABCC:318:8::33 activate
+  neighbor 2022:ABCC:318:8::34 activate
+  neighbor 2022:ABCC:318:8::35 activate
+  neighbor 2022:ABCC:318:8::36 activate
+ exit-address-family
+R31#
+````
+Использование Peer-group позволяет уменьшить кол-во настроек, будет заметней с увеличением кол-ва клиентов.
+
+Настройки RR клиента ничем не отличаются от обычной настройки iBGP, покажем на примере R35.
+````
+R35#sh run | sec bgp
+router bgp 100
+ bgp router-id 10.10.8.35
+ bgp log-neighbor-changes
+ neighbor 10.10.8.31 remote-as 100
+ neighbor 10.10.8.31 update-source Loopback0
+ neighbor 10.10.8.32 remote-as 100
+ neighbor 10.10.8.32 update-source Loopback0
+ neighbor 2022:A304:11AA:1::1:20 remote-as 120
+ neighbor 2022:ABCC:318:8::31 remote-as 100
+ neighbor 2022:ABCC:318:8::31 update-source Loopback0
+ neighbor 2022:ABCC:318:8::32 remote-as 100
+ neighbor 2022:ABCC:318:8::32 update-source Loopback0
+ neighbor 135.200.13.51 remote-as 120
+ !
+ address-family ipv4
+  network 110.1.22.0 mask 255.255.255.0
+  neighbor 10.10.8.31 activate
+  neighbor 10.10.8.31 next-hop-self
+  neighbor 10.10.8.32 activate
+  neighbor 10.10.8.32 next-hop-self
+  no neighbor 2022:A304:11AA:1::1:20 activate
+  no neighbor 2022:ABCC:318:8::31 activate
+  no neighbor 2022:ABCC:318:8::32 activate
+  neighbor 135.200.13.51 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network 2022:ABCC:318::/48
+  neighbor 2022:A304:11AA:1::1:20 activate
+  neighbor 2022:ABCC:318:8::31 activate
+  neighbor 2022:ABCC:318:8::31 next-hop-self
+  neighbor 2022:ABCC:318:8::32 activate
+  neighbor 2022:ABCC:318:8::32 next-hop-self
+ exit-address-family
+R35#
+````
+Посмотрим, что заданные условия выполнены, покажем команды вывода _**sh ip protocols**_ для RR R31 и клиента R35.
 
 ````
+Routing Protocol is "bgp 100"
+  Outgoing update filter list for all interfaces is not set
+  Incoming update filter list for all interfaces is not set
+  Route Reflector for address family IPv4 Unicast with the cluster-id 0.0.0.1, 2                                                                         clients
+  Route Reflector for address family IPv6 Unicast with the cluster-id 0.0.0.1, 2                                                                         clients
+  IGP synchronization is disabled
+  Automatic route summarization is disabled
+  Neighbor(s):
+    Address          FiltIn FiltOut DistIn DistOut Weight RouteMap
+    10.10.8.32
+    10.10.8.33
+    10.10.8.34
+    10.10.8.35
+    10.10.8.36
+  Maximum path: 1
+  Routing Information Sources:
+    Gateway         Distance      Last Update
+    10.10.8.35           200      6d19h
+    10.10.8.36           200      6d19h
+  Distance: external 20 internal 200 local 200
+
+R31#
+````
+````
+Routing Protocol is "bgp 100"
+  Outgoing update filter list for all interfaces is not set
+  Incoming update filter list for all interfaces is not set
+  IGP synchronization is disabled
+  Automatic route summarization is disabled
+  Neighbor(s):
+    Address          FiltIn FiltOut DistIn DistOut Weight RouteMap
+    10.10.8.31
+    10.10.8.32
+    135.200.13.51
+  Maximum path: 1
+  Routing Information Sources:
+    Gateway         Distance      Last Update
+    10.10.8.31           200      6d19h
+    135.200.13.51         20      6d19h
+  Distance: external 20 internal 200 local 200
+
+R35#
+````
+Ну и содержание таблицы базы данных маршрутов BGP для R35
+````
+R35#sh ip bgp
+BGP table version is 7, local router ID is 10.10.8.35
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
+              x best-external, a additional-path, c RIB-compressed,
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
+
+     Network          Next Hop            Metric LocPrf Weight Path
+ * i 99.13.77.0/24    10.10.8.36               0    100      0 1000 i
+ *>i                  10.10.8.36               0    100      0 1000 i
+ *                    135.200.13.51                          0 120 1000 i
+ * i 110.1.22.0/24    10.10.8.36         2048640    100      0 i
+ *>                   10.10.0.25         2048640         32768 i
+ *>  135.200.13.0/24  135.200.13.51            0             0 120 i
+R35#
+````
+Настройка не особо отличается от обычной настройки BGP с RR.
+
+Вернемся к настройке сети офиса оператора.
+
+8. Манипуляция с атрибутами BGP в сети офиса оператора.
+
+По какой-то причине, допустим по стоимости трафика, нам необходимо направить весь трафик в сторону ISP1. Тогда ISP2 станет для нас резервным провайдером.
+Отобразим на примере R1 текущие маршруты 
+
+
+
+
+
+
+9. Настроить NAT на R1 и R2 в сети оператора
+
+Настроим NAT c перегрузкой на R1 и R2 в пул из четырех IP адресов собственной AS оператора.
+Разрешим пользователям в сети 192.168.20.0.24 выход в глобальную сеть через NAT.
+
+Настройки на примере R1.
+
+
+
+
+
+
+
+
+
+
+
+
+
