@@ -1,0 +1,240 @@
+Current configuration : 4697 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$Ij0c$LbyRcNuJEcl2zCZ0MiBx3/
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name OperaTor.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$jkKc$ZJL1U9SJCdFkhlKZEs7j01
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.1.1 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address 2022:A304:20BF:8::1/128
+!
+interface Ethernet0/0
+ description to_R6
+ ip address 192.168.0.1 255.255.255.252
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 070C285F4D06
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address FE80::1 link-local
+ ipv6 address 2022:A304:20BF::1:1:6/96
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface Ethernet0/1
+ description to_R3
+ ip address 192.168.0.21 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 070C285F4D06
+ ip ospf network point-to-point
+ ip ospf 1 area 1
+ ipv6 address FE80::1 link-local
+ ipv6 address 2022:A304:20BF::6:1:3/96
+ ipv6 enable
+ ipv6 ospf 1 area 1
+!
+interface Ethernet0/2
+ description to_R2
+ ip address 192.168.0.17 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 070C285F4D06
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address FE80::1 link-local
+ ipv6 address 2022:A304:20BF::5:1:2/96
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface Ethernet0/3
+ description to_R14
+ ip address 99.13.77.0 255.255.255.254
+ ip nat outside
+ ip virtual-reassembly in
+ ipv6 address FE80::1 link-local
+ ipv6 address 2022:A304:20BF::1/112
+ ipv6 enable
+!
+interface Ethernet1/0
+ description to_R5
+ ip address 192.168.0.9 255.255.255.252
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 070C285F4D06
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address FE80::1 link-local
+ ipv6 address 2022:A304:20BF::3:1:5/96
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface Ethernet1/1
+ description to_R4
+ ip address 192.168.0.25 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 070C285F4D06
+ ip ospf network point-to-point
+ ip ospf 1 area 1
+ ipv6 address FE80::1 link-local
+ ipv6 address 2022:A304:20BF::7:1:4/96
+ ipv6 enable
+ ipv6 ospf 1 area 1
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 192.168.1.1
+ area 1 stub
+!
+router bgp 1000
+ bgp router-id 192.168.1.1
+ bgp log-neighbor-changes
+ neighbor 2022:A304:20BF::2 remote-as 120
+ neighbor 2022:A304:20BF:8::2 remote-as 1000
+ neighbor 2022:A304:20BF:8::2 update-source Loopback0
+ neighbor 99.13.77.1 remote-as 120
+ neighbor 192.168.1.2 remote-as 1000
+ neighbor 192.168.1.2 update-source Loopback0
+ !
+ address-family ipv4
+  network 99.13.77.0 mask 255.255.255.0
+  no neighbor 2022:A304:20BF::2 activate
+  no neighbor 2022:A304:20BF:8::2 activate
+  neighbor 99.13.77.1 activate
+  neighbor 99.13.77.1 prefix-list BGP_no_trasit out
+  neighbor 99.13.77.1 route-map Local-Pref in
+  neighbor 192.168.1.2 activate
+  neighbor 192.168.1.2 next-hop-self
+ exit-address-family
+ !
+ address-family ipv6
+  network 22:A304:20BF::/48
+  neighbor 2022:A304:20BF::2 activate
+  neighbor 2022:A304:20BF::2 prefix-list BGP_no_trasit_v6 out
+  neighbor 2022:A304:20BF:8::2 activate
+  neighbor 2022:A304:20BF:8::2 next-hop-self
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat pool Pool_inet 98.13.77.2 98.13.77.3 netmask 255.255.255.0
+ip nat inside source list 9 pool Pool_inet overload
+ip route 0.0.0.0 0.0.0.0 99.13.77.1
+!
+!
+ip prefix-list BGP_no_trasit seq 5 permit 99.13.77.0/24
+ipv6 route ::/0 2022:A304:20BF::2
+ipv6 router ospf 1
+ router-id 192.168.1.1
+ area 1 stub
+!
+!
+!
+ipv6 prefix-list BGP_no_trasit_v6 seq 5 permit 2022:A304:20BF::/48
+route-map Local-Pref permit 10
+ set local-preference 500
+!
+!
+access-list 20 deny   192.168.20.0 0.0.0.3
+access-list 20 permit 192.168.20.0 0.0.0.255
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 094F471A1A0A
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 01100F175804
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

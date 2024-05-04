@@ -1,0 +1,150 @@
+Current configuration : 2442 bytes
+!
+! Last configuration change at 18:23:36 MSK Sat May 4 2024
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname SW1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$inTI$Hru8qRfAb.F94KpTghgpO.
+!
+username admin privilege 15 secret 5 $1$UrB8$F1z7iFfdUtZ2faoE75j4v/
+no aaa new-model
+clock timezone MSK 3 0
+!
+!
+!
+!
+!
+ip arp inspection vlan 21
+!
+!
+!
+ip dhcp snooping vlan 21
+ip dhcp snooping
+no ip domain-lookup
+ip domain-name OperaTor.ru
+ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+vlan 4093
+ name Parking
+!
+vlan 4094
+ name Native
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ description to_R3
+ switchport trunk allowed vlan 21,99
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 4094
+ switchport mode trunk
+ ip arp inspection trust
+ ip dhcp snooping trust
+!
+interface Ethernet0/1
+ description to_R4
+ switchport trunk allowed vlan 21,99
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 4094
+ switchport mode trunk
+ ip arp inspection trust
+ ip dhcp snooping trust
+!
+interface Ethernet0/2
+ description to_VPC21
+ switchport access vlan 21
+ switchport mode access
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0050.7966.681d
+ switchport port-security aging static
+ switchport port-security
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Ethernet0/3
+ switchport access vlan 4093
+ switchport mode access
+ shutdown
+!
+interface Ethernet1/0
+ switchport access vlan 4093
+ switchport mode access
+ shutdown
+!
+interface Ethernet1/1
+ switchport access vlan 4093
+ switchport mode access
+ shutdown
+!
+interface Ethernet1/2
+ switchport access vlan 4093
+ switchport mode access
+ shutdown
+!
+interface Ethernet1/3
+ switchport access vlan 4093
+ switchport mode access
+ shutdown
+!
+interface Vlan99
+ ip address 192.168.2.4 255.255.255.0
+ ipv6 address 2022:A304:20BF:8::1:1/128
+!
+ip default-gateway 192.168.2.1
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 13061E010803
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 01100F175804
+ logging synchronous
+ login
+!
+!
+end

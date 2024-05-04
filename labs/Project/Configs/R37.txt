@@ -1,0 +1,211 @@
+Current configuration : 3738 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R37
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$DZLm$XVPYWUn1KGgNVi9V.Sr9P.
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name InetISP1.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+key chain EIGRP
+ key 1
+  key-string 7 01100F175804
+  cryptographic-algorithm hmac-sha-256
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$Ozam$5JvhcqTVjIqa1mZoZ92s30
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.10.8.37 255.255.255.255
+ ipv6 address 2022:ABCC:318:8::37/128
+!
+interface Loopback1
+ ip address 110.1.22.8 255.255.255.0
+ ipv6 address 2022:ABCC:318::8888/128
+!
+interface Ethernet0/0
+ description to_R33
+ ip address 10.10.0.38 255.255.255.252
+ ipv6 address FE80::37 link-local
+ ipv6 address 2022:ABCC:318:1:0:9:37:33/96
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_R34
+ ip address 10.10.0.41 255.255.255.252
+ ipv6 address FE80::37 link-local
+ ipv6 address 2022:ABCC:318:1:0:A:37:34/96
+ ipv6 enable
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+!
+router eigrp ISP2
+ !
+ address-family ipv4 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/0
+   authentication mode hmac-sha-256 7 1511021F0725
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   authentication mode hmac-sha-256 7 14141B180F0B
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  network 10.10.0.0 0.0.0.255
+  network 10.10.8.37 0.0.0.0
+  network 110.1.22.8 0.0.0.0
+  eigrp router-id 10.10.8.37
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/0
+   authentication mode hmac-sha-256 7 01100F175804
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   authentication mode hmac-sha-256 7 060506324F41
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  eigrp router-id 10.10.8.37
+ exit-address-family
+!
+router bgp 100
+ bgp router-id 10.10.8.37
+ bgp log-neighbor-changes
+ neighbor 10.10.8.33 remote-as 100
+ neighbor 10.10.8.33 update-source Loopback0
+ neighbor 10.10.8.34 remote-as 100
+ neighbor 10.10.8.34 update-source Loopback0
+ neighbor 2022:ABCC:318:8::33 remote-as 100
+ neighbor 2022:ABCC:318:8::33 update-source Loopback0
+ neighbor 2022:ABCC:318:8::34 remote-as 100
+ neighbor 2022:ABCC:318:8::34 update-source Loopback0
+ !
+ address-family ipv4
+  neighbor 10.10.8.33 activate
+  neighbor 10.10.8.33 next-hop-self
+  neighbor 10.10.8.34 activate
+  neighbor 10.10.8.34 next-hop-self
+  no neighbor 2022:ABCC:318:8::33 activate
+  no neighbor 2022:ABCC:318:8::34 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor 2022:ABCC:318:8::33 activate
+  neighbor 2022:ABCC:318:8::33 next-hop-self
+  neighbor 2022:ABCC:318:8::34 activate
+  neighbor 2022:ABCC:318:8::34 next-hop-self
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 110.1.22.0 255.255.255.0 Null0
+!
+ipv6 route 2022:ABCC:318::/48 Null0
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 02050D480809
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 0822455D0A16
+ logging synchronous
+ login
+ transport input none
+!
+!
+end
