@@ -22,14 +22,15 @@
 7. Настроить iBGP в сети ISP2 с разбиением на 2-а кластера с двумя RR в каждой.
 8. Манипуляция с атрибутами BGP в сети офиса оператора.
 9. Настроить NAT на R1 и R2 в сети оператора
+10. Настроить протокол динамической маршрутизации IS-IS в MPLS сегменте сети провайдера.
+11. 
 
 
 
 
 
 
-
-1. Разработать схему лабораторного стенда, задокументировать адресное пространство.
+#### 1. Разработать схему лабораторного стенда, задокументировать адресное пространство.
 
 Схема лабораторного стенда
 
@@ -155,7 +156,7 @@
 
 
 
-2. Для всех сетевых элементов выполнить первичные настройки, интерфейсам присвоить IP адреса.
+#### 2. Для всех сетевых элементов выполнить первичные настройки, интерфейсам присвоить IP адреса.
    Покажем на примере настройки R1.
 ````
 hostname R1
@@ -262,7 +263,7 @@ line vty 0 4
 !
 end
 ````
-3. Настроить сеть офиса оператора.
+#### 3. Настроить сеть офиса оператора.
 
 #### Настройка коммутаторов сети доступа.
 
@@ -1696,22 +1697,189 @@ R35#
 
 Вернемся к настройке сети офиса оператора.
 
-8. Манипуляция с атрибутами BGP в сети офиса оператора.
+#### 8. Манипуляция с атрибутами BGP в сети офиса оператора.
 
 По какой-то причине, допустим по стоимости трафика, нам необходимо направить весь трафик в сторону ISP1. Тогда ISP2 станет для нас резервным провайдером.
-Отобразим на примере R1 текущие маршруты 
+Отобразим на примере R36 текущие маршруты в базе BGP
+````
+R36#sh ip bgp
+BGP table version is 7, local router ID is 10.10.8.36
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
+              x best-external, a additional-path, c RIB-compressed,
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
 
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>  99.13.77.0/24    110.1.22.8               0             0 1000 i
+ * i 110.1.22.0/24    10.10.8.35         2048640    100      0 i
+ *>                   10.10.0.34         2048640         32768 i
+ *   135.200.13.0/24  110.1.22.8                             0 1000 120 i
+ * i                  10.10.8.35               0    100      0 120 i
+ *>i                  10.10.8.35               0    100      0 120 i
+R36#
+```` 
+Наилучшим маршрутом для доставки трафика в сеть 99.13.77.0/24 AS1000 является прямое соединение между R2 и R36.
+Наша задача, сделать так, чтобы провайдер ISP1 стал приоритетным. Для этого попробуем повлиять на атрибут AS-Path.
+Настройку производим на R2.
+````
+R2(config)#route-map AS_PATH_PREP permit 10
+R2(config-route-map)#set as-path prepend 1000 1000 1000
+R2(config)#router bgp 1000
+R2(config-router)#address-family ipv4
+R2(config-router-af)#neighbor 110.1.22.9 route-map AS_PATH_PREP out
+````
+После внесенных изменений талица маршрутов BGP R36 выглядит так
+````
+R36#sh ip bgp
+BGP table version is 10, local router ID is 10.10.8.36
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
+              x best-external, a additional-path, c RIB-compressed,
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
 
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>i 99.13.77.0/24    10.10.8.35               0    100      0 120 1000 i
+ * i                  10.10.8.35               0    100      0 120 1000 i
+ *                    110.1.22.8               0             0 1000 1000 1000 1000 i
+ * i 110.1.22.0/24    10.10.8.35         2048640    100      0 i
+ *>                   10.10.0.34         2048640         32768 i
+ *   135.200.13.0/24  110.1.22.8                             0 1000 1000 1000 1000 120 i
+ * i                  10.10.8.35               0    100      0 120 i
+ *>i                  10.10.8.35               0    100      0 120 i
+R36#
+````
+Очевидно, что входящий трафик в сеть провайдера из/через AS100 попадет в сторону оператора на сеть  99.13.77.0/24 уже только через AS120.
+Да мы нарочно пустили так трафик и скорее всего задержки увеличатся, но мы не сервис проовайдер интернет.
 
+Что касается исходящего трафика, то его так-же направим в сторону ISP1.
+Настройку производим на R1 а результат посмотрим на R2.
 
+До настройки таблица маршрутов BGP на R2
+````
+R2#sh ip bgp
+BGP table version is 5, local router ID is 192.168.1.2
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
+              x best-external, a additional-path, c RIB-compressed,
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
 
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>  99.13.77.0/24    0.0.0.0                  0         32768 i
+ *>  110.1.22.0/24    110.1.22.9         2048640             0 100 i
+ *>i 135.200.13.0/24  192.168.1.1              0    100      0 120 i
+ *                    110.1.22.9                             0 100 120 i
+R2#
+````
+Выполняем настройки на R1
+````
+R1(config)#route-map Local-Pref permit 10
+R1(config-route-map)#set local-preference 500
 
-9. Настроить NAT на R1 и R2 в сети оператора
+R1(config)#router bgp 1000
+R1(config-router)#address-family ipv4
+R1(config-router-af)#neighbor 99.13.77.1 route-map Local-Pref in
+````
+Теперь 
+````
+R2#sh ip bgp
+BGP table version is 8, local router ID is 192.168.1.2
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
+              x best-external, a additional-path, c RIB-compressed,
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
 
-Настроим NAT c перегрузкой на R1 и R2 в пул из четырех IP адресов собственной AS оператора.
-Разрешим пользователям в сети 192.168.20.0.24 выход в глобальную сеть через NAT.
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>  99.13.77.0/24    0.0.0.0                  0         32768 i
+ *>i 110.1.22.0/24    192.168.1.1              0    500      0 120 100 i
+ *                    110.1.22.9         2048640             0 100 i
+ *>i 135.200.13.0/24  192.168.1.1              0    500      0 120 i
+ *                    110.1.22.9                             0 100 120 i
+````
+Очевидно, что теперь и весь исходящий трафик оператора пойдет в сторону AS120 ISP1.
+
+Обезопасим себя от транзитного трафика сети интернет.
+Настройки выполним для R1 и R2, а покажем на примере R1
+````
+R1(config)# ip prefix-list BGP_no_trasit seq 5 permit 99.13.77.0/24
+R1(config)# ipv6 prefix-list BGP_no_trasit_v6 seq 5 permit 2022:a304:20bf::/48
+R1(config)#router bgp 1000
+R1(config-router)#address-family ipv4
+R1(config-router-af)#neighbor 99.13.77.1 prefix-list BGP_no_trasit out
+
+R1(config-router)#address-family ipv6
+R1(config-router-af)#neighbor 2022:A304:20BF::2 prefix-list BGP_no_trasit_v6 out
+````
+
+#### 9. Настроить NAT на R1 и R2 в сети оператора
+
+Настроим NAT c перегрузкой на R1 и R2 в пул из двух IP адресов собственной AS оператора.
+Разрешим пользователям в сети 192.168.20.0/24 выход в глобальную сеть через NAT.
 
 Настройки на примере R1.
+
+Cоздаем стандартный нумерованный ACL
+````
+R1(config)#access-list 20 deny 192.168.20.0 0.0.0.3
+R1(config)#access-list 20 permit 192.168.20.0 0.0.0.255
+````
+Cоздаем пул ip адресов с именем Pool_inet и включаем PAT для IP адресов разрешенного диапазона access-list 20 в созданный пул Pool_inet.
+````
+R1(config)#ip nat pool Pool_inet 98.13.77.2 98.13.77.3 netmask 255.255.255.0
+R1(config)#ip nat inside source list 9 pool Pool_inet overload
+````
+Устанавливаем интерфейсы e0/1-2 и e1/1 R1 как внутренние для NAT, а e0/3 - внешний с помощбю команд
+````
+R1(config-if)#ip nat inside
+R1(config-if)#ip nat outside
+````
+
+
+Часть 2.
+
+Что-бы раскрыть все преймущества технологии передачи пакетов с помощью меток (далее MPLS-TE) необходимо построить разветвленную сеть с кольцевыми топологиями.
+Фрагмент сети MPLS-TE оператора представлен на отдельной картинке
+
+Сегмент сети MPLS провайдера.
+
+![MPLS-Shem.png](Stend%2FMPLS-Shem.png)
+
+Немного о схеме. R5 и R6 находятся на центральном узле связи. Все остальные роутеры находятся на удаленных площадках.
+Соединения между R5 и R7, R6 и R8 разненсены по разным направлениям и соеденены между собой оборудование спектрального уплотнения DWDM.
+Все остальные соединения выполнены по серому волокну. Красным цветом выделены магистральные линки с большой пропускной способностью.
+Собственно в них и будет помещена большая часть трафика. 
+
+
+В MPLS-TE используются LSP построенные с помощью протокола RSVP-TE, который в срою очередь может работать поверх IGP OSPF или IS-IS.
+Настройку начнем с динамического протокола маршрутизации IS-IS.
+
+#### 10. Настроить протокол динамической маршрутизации IS-IS в MPLS сегменте сети провайдера.
+
+Допустим все роутеры представленного сегмента находятся в одной зоне Area1.
+При запуске процесса IS-IS присваем имя Area1, подразумевая, что будет еще расширение сети и на R5 и R6 будут запущены отдельные процессы IS-IS.
+Для MPLS важно, что-бы все маршрутизаторы использовали один тип соседства, выбираем тип 2.
+Так-же
+
+Настройки IS-IS на всех роутерах практически однотипны, покажем на примере R5
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
