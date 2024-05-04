@@ -1,0 +1,277 @@
+Current configuration : 5651 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R31
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$4.5V$BFRCpj8A5nKaU3Y3JYpxw0
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name InetISP1.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+key chain EIGRP
+ key 1
+  key-string 7 01100F175804
+  cryptographic-algorithm hmac-sha-256
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$v3i.$mioZlPx9cRlxOMznBFwrC1
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.10.8.31 255.255.255.255
+ ipv6 address 2022:ABCC:318:8::31/128
+!
+interface Ethernet0/0
+ description to_R33
+ ip address 10.10.0.1 255.255.255.252
+ ipv6 address FE80::31 link-local
+ ipv6 address 2022:ABCC:318:1::31:33/96
+ ipv6 enable
+!
+interface Ethernet0/1
+ description to_R32
+ ip address 10.10.0.5 255.255.255.252
+ ipv6 address FE80::31 link-local
+ ipv6 address 2022:ABCC:318:1:0:1:31:32/96
+ ipv6 enable
+!
+interface Ethernet0/2
+ description to_R35
+ ip address 10.10.0.25 255.255.255.252
+ ipv6 address FE80::31 link-local
+ ipv6 address 2022:ABCC:318:1:0:6:31:35/96
+ ipv6 enable
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ description to_R34
+ ip address 10.10.0.9 255.255.255.252
+ ipv6 address FE80::31 link-local
+ ipv6 address 2022:ABCC:318:1:0:2:31:34/96
+ ipv6 enable
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+!
+router eigrp ISP2
+ !
+ address-family ipv4 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/0
+   authentication mode hmac-sha-256 7 045802150C2E
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   authentication mode hmac-sha-256 7 14141B180F0B
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/2
+   authentication mode hmac-sha-256 7 13061E010803
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet1/0
+   authentication mode hmac-sha-256 7 00071A150754
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  network 10.10.0.0 0.0.0.255
+  network 10.10.8.31 0.0.0.0
+  eigrp router-id 10.10.8.31
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/0
+   authentication mode hmac-sha-256 7 030752180500
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   authentication mode hmac-sha-256 7 0822455D0A16
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/2
+   authentication mode hmac-sha-256 7 094F471A1A0A
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet1/0
+   authentication mode hmac-sha-256 7 00071A150754
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  eigrp router-id 10.10.8.31
+ exit-address-family
+!
+router bgp 100
+ bgp router-id 10.10.8.31
+ bgp cluster-id 1
+ bgp log-neighbor-changes
+ neighbor iBGP_Cli peer-group
+ neighbor iBGP_Cli remote-as 100
+ neighbor iBGP_Cli update-source Loopback0
+ neighbor iBGP_RR peer-group
+ neighbor iBGP_RR remote-as 100
+ neighbor iBGP_RR update-source Loopback0
+ neighbor iBGP_RR_IPv6 peer-group
+ neighbor iBGP_RR_IPv6 remote-as 100
+ neighbor iBGP_RR_IPv6 update-source Loopback0
+ neighbor iBGP_Cli_IPv6 peer-group
+ neighbor iBGP_Cli_IPv6 remote-as 100
+ neighbor iBGP_Cli_IPv6 update-source Loopback0
+ neighbor 10.10.8.32 peer-group iBGP_RR
+ neighbor 10.10.8.33 peer-group iBGP_RR
+ neighbor 10.10.8.34 peer-group iBGP_RR
+ neighbor 10.10.8.35 peer-group iBGP_Cli
+ neighbor 10.10.8.36 peer-group iBGP_Cli
+ neighbor 2022:ABCC:318:8::32 peer-group iBGP_RR_IPv6
+ neighbor 2022:ABCC:318:8::33 peer-group iBGP_RR_IPv6
+ neighbor 2022:ABCC:318:8::34 peer-group iBGP_RR_IPv6
+ neighbor 2022:ABCC:318:8::35 peer-group iBGP_Cli_IPv6
+ neighbor 2022:ABCC:318:8::36 peer-group iBGP_Cli_IPv6
+ !
+ address-family ipv4
+  neighbor iBGP_Cli route-reflector-client
+  neighbor iBGP_Cli next-hop-self
+  neighbor iBGP_RR next-hop-self
+  neighbor iBGP_RR_IPv6 next-hop-self
+  neighbor 10.10.8.32 activate
+  neighbor 10.10.8.33 activate
+  neighbor 10.10.8.34 activate
+  neighbor 10.10.8.35 activate
+  neighbor 10.10.8.36 activate
+  no neighbor 2022:ABCC:318:8::32 activate
+  no neighbor 2022:ABCC:318:8::33 activate
+  no neighbor 2022:ABCC:318:8::34 activate
+  no neighbor 2022:ABCC:318:8::35 activate
+  no neighbor 2022:ABCC:318:8::36 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor iBGP_RR_IPv6 next-hop-self
+  neighbor iBGP_Cli_IPv6 route-reflector-client
+  neighbor iBGP_Cli_IPv6 next-hop-self
+  neighbor 2022:ABCC:318:8::32 activate
+  neighbor 2022:ABCC:318:8::33 activate
+  neighbor 2022:ABCC:318:8::34 activate
+  neighbor 2022:ABCC:318:8::35 activate
+  neighbor 2022:ABCC:318:8::36 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 104D000A0618
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 045802150C2E
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

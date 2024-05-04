@@ -1,0 +1,215 @@
+Current configuration : 3957 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R36
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$3AnJ$GVxiCI976b7OeakyU5a8Y0
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name InetISP1.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+key chain EIGRP
+ key 1
+  key-string 7 01100F175804
+  cryptographic-algorithm hmac-sha-256
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$gGuM$nmb/qiX0I7V.TSWlTKixo1
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.10.8.36 255.255.255.255
+ ipv6 address 2022:ABCC:318:8::36/128
+!
+interface Ethernet0/0
+ description to_R2
+ ip address 110.1.22.9 255.255.255.254
+ ipv6 address FE80::36 link-local
+ ipv6 address 2022:ABCC:318:ABAB:18::40/112
+ ipv6 enable
+ no cdp enable
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ description to_R32
+ ip address 10.10.0.33 255.255.255.252
+ ipv6 address FE80::36 link-local
+ ipv6 address 2022:ABCC:318:1:0:8:36:32/96
+ ipv6 enable
+!
+interface Ethernet0/3
+ description to_R35
+ ip address 10.10.0.30 255.255.255.252
+ ipv6 address FE80::36 link-local
+ ipv6 address 2022:ABCC:318:1:0:7:36:35/96
+ ipv6 enable
+!
+!
+router eigrp ISP2
+ !
+ address-family ipv4 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/2
+   authentication mode hmac-sha-256 7 060506324F41
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/3
+   authentication mode hmac-sha-256 7 05080F1C2243
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  network 10.10.0.0 0.0.0.255
+  network 10.10.8.36 0.0.0.0
+  eigrp router-id 10.10.8.36
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 1
+  !
+  af-interface Ethernet0/2
+   authentication mode hmac-sha-256 7 030752180500
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  af-interface Ethernet0/3
+   authentication mode hmac-sha-256 7 00071A150754
+   authentication key-chain EIGRP
+   bandwidth-percent 40
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  eigrp router-id 10.10.8.36
+ exit-address-family
+!
+router bgp 100
+ bgp router-id 10.10.8.36
+ bgp log-neighbor-changes
+ neighbor 10.10.8.31 remote-as 100
+ neighbor 10.10.8.31 update-source Loopback0
+ neighbor 10.10.8.32 remote-as 100
+ neighbor 10.10.8.32 update-source Loopback0
+ neighbor 2022:ABCC:318:8::31 remote-as 100
+ neighbor 2022:ABCC:318:8::31 update-source Loopback0
+ neighbor 2022:ABCC:318:8::32 remote-as 100
+ neighbor 2022:ABCC:318:8::32 update-source Loopback0
+ neighbor 2022:ABCC:318:ABAB:18::41 remote-as 1000
+ neighbor 110.1.22.8 remote-as 1000
+ !
+ address-family ipv4
+  network 110.1.22.0 mask 255.255.255.0
+  neighbor 10.10.8.31 activate
+  neighbor 10.10.8.31 next-hop-self
+  neighbor 10.10.8.32 activate
+  neighbor 10.10.8.32 next-hop-self
+  no neighbor 2022:ABCC:318:8::31 activate
+  no neighbor 2022:ABCC:318:8::32 activate
+  no neighbor 2022:ABCC:318:ABAB:18::41 activate
+  neighbor 110.1.22.8 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network 2022:ABCC:318::/48
+  neighbor 2022:ABCC:318:8::31 activate
+  neighbor 2022:ABCC:318:8::31 next-hop-self
+  neighbor 2022:ABCC:318:8::32 activate
+  neighbor 2022:ABCC:318:8::32 next-hop-self
+  neighbor 2022:ABCC:318:ABAB:18::41 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 0822455D0A16
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 094F471A1A0A
+ logging synchronous
+ login
+ transport input none
+!
+!
+end
