@@ -2087,6 +2087,8 @@ R5(config-router)#mpls traffic-eng level-2
 ````
 Настройки на всех роутерах одинаковые
 
+#### 11. Построение динамического туннеля.
+
 Произведем настройку динамического туннеля между R5-R10
 ````
 R5(config)#interface tunnel 10
@@ -2193,7 +2195,8 @@ Name: to Customer1_R10                    (Tunnel10) Destination: 192.168.10.10
 R5#
 ````
 Теперь все в порядке, единственно что туннель не перестроился до того момента пока не спровоцировал повреждение 
-по маршруту ранее построенного LSP.
+по маршруту ранее построенного LSP. Хотя надо было в настройках тунеля указать команду _**routing dynamic**_ и тогда 
+в случае доступности кратчайшего маршрута перестроение туннеля будет выполнено автоматически.
 ````
 R5#traceroute mpls traffic-eng tunnel 10
 Tracing MPLS TE Label Switched Path on Tunnel10, timeout is 2 seconds
@@ -2214,5 +2217,58 @@ R5#
 ````
 Был построен только один однонаправленный туннель в сторону R10, необходимо организовать такой-же туннель, но только уже от R10 в сторону R5.
 ````
-
+R10(config)#interface Tunnel10
+R10(config-if)# description to Customer1_R5
+R10(config-if)# ip unnumbered Loopback0
+R10(config-if)# tunnel mode mpls traffic-eng
+R10(config-if)# tunnel destination 192.168.10.5
+R10(config-if)# tunnel mpls traffic-eng bandwidth 500
+R10(config-if)# tunnel mpls traffic-eng path-option 1 dynamic
+R10(config-if)# routing dynamic
 ````
+Успешно настроили туннели в оба направления
+````
+R10#sh mpls traffic-eng tunnels brief
+Signalling Summary:
+LSP Tunnels Process:            running
+Passive LSP Listener:           running
+RSVP Process:                   running
+Forwarding:                     enabled
+Periodic reoptimization:        every 3600 seconds, next in 2258 seconds
+Periodic FRR Promotion:         Not Running
+Periodic auto-bw collection:    every 300 seconds, next in 158 seconds
+TUNNEL NAME                      DESTINATION      UP IF      DOWN IF    STATE/PROT
+to Customer1_R5                  192.168.10.5     -         Et0/0     up/up
+to Customer1_R10                 192.168.10.10    Et0/0      -          up/up   
+Displayed 1 (of 1) heads, 0 (of 0) midpoints, 1 (of 1) tails
+````
+#### 13. Приоритизация туннелей
+
+Покажем конфигурацию Tunnel10 на R5
+````
+interface Tunnel10
+ description to Customer1_R10
+ ip unnumbered Loopback0
+ tunnel mode mpls traffic-eng
+ tunnel destination 192.168.10.10
+ tunnel mpls traffic-eng priority 7 7
+ tunnel mpls traffic-eng bandwidth 500
+ tunnel mpls traffic-eng path-option 1 dynamic
+````
+**_tunnel mpls traffic-eng priority 7 7_** такую команду не задавали, команда создана автоматически.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
