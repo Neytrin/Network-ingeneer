@@ -2414,12 +2414,108 @@ Name: to Customer2_R9                     (Tunnel9) Destination: 192.168.10.9
 *May  6 18:14:31.822: %LINEPROTO-5-UPDOWN: Line protocol on Interface Tunnel9, changed state to down``
 ````
 При этом есть рабочий доступный выход через R8, но мы сами обрубили концы.
-Делаем вывод, что-бы эффективно использовать Explicit-Path нужно хорошо знать топологию сети.
+Делаем вывод, что-бы эффективно использовать Explicit-Path нужно хорошо знать топологию сети и иметь прямые руки.
 
-Переделаем как надо, повторим тот-же маршрут R5(e0/2)-R7(e0/0)-R9(e0/1).
+Добавим команду в настройке интерфейса Tunnel9
+````
+R6(config-if)#tunnel mpls traffic-eng path-option 10 dynamic
+````
+Команда имеет более низкий приоритет, но поскольку туннель не может быть построен по указанному нами условию,
+то он будет построен динамически.
+
+Имеем в итоге рабочий туннель через R8.
+````
+R6#sh mpls traffic-eng tunnels tunnel 9
+
+Name: to Customer2_R9                     (Tunnel9) Destination: 192.168.10.9
+  Status:
+    Admin: up         Oper: up     Path: valid       Signalling: connected
+    path option 10, type dynamic (Basis for Setup, path weight 30)
+    path option 1, type explicit Customer2
+
+  Config Parameters:
+    Bandwidth: 1000     kbps (Global)  Priority: 7  7   Affinity: 0x0/0xFFFF
+    Metric Type: TE (default)
+    AutoRoute:  disabled  LockDown: disabled  Loadshare: 1000     bw-based
+    auto-bw: disabled
+  Active Path Option Parameters:
+    State: dynamic path option 10 is active
+    BandwidthOverride: disabled  LockDown: disabled  Verbatim: disabled
+
+
+  InLabel  :  -
+  OutLabel : Ethernet1/1, 16
+  RSVP Signalling Info:
+       Src 192.168.10.6, Dst 192.168.10.9, Tun_Id 9, Tun_Instance 82
+    RSVP Path Info:
+      My Address: 192.168.11.13
+
+R6#sh mpls traffic-eng tunnels tunnel 9
+
+Name: to Customer2_R9                     (Tunnel9) Destination: 192.168.10.9
+  Status:
+    Admin: up         Oper: up     Path: valid       Signalling: connected
+    path option 10, type dynamic (Basis for Setup, path weight 30)
+    path option 1, type explicit Customer2
+
+  Config Parameters:
+    Bandwidth: 1000     kbps (Global)  Priority: 7  7   Affinity: 0x0/0xFFFF
+    Metric Type: TE (default)
+    AutoRoute:  disabled  LockDown: disabled  Loadshare: 1000     bw-based
+    auto-bw: disabled
+  Active Path Option Parameters:
+    State: dynamic path option 10 is active
+    BandwidthOverride: disabled  LockDown: disabled  Verbatim: disabled
+
+
+  InLabel  :  -
+  OutLabel : Ethernet1/1, 16
+  RSVP Signalling Info:
+       Src 192.168.10.6, Dst 192.168.10.9, Tun_Id 9, Tun_Instance 82
+    RSVP Path Info:
+      My Address: 192.168.11.13
+      Explicit Route: 192.168.11.14 192.168.11.46 192.168.10.9
+      Record   Route:   NONE
+      Tspec: ave rate=1000 kbits, burst=1000 bytes, peak rate=1000 kbits
+    RSVP Resv Info:
+      Record   Route:   NONE
+      Fspec: ave rate=1000 kbits, burst=1000 bytes, peak rate=1000 kbits
+  Shortest Unconstrained Path Info:
+    Path Weight: 30 (TE)
+    Explicit Route: 192.168.11.10 192.168.11.46 192.168.10.9
+  History:
+    Tunnel:
+      Time since created: 2 hours, 54 minutes
+      Time since path change: 7 minutes, 46 seconds
+      Number of LSP IDs (Tun_Instances) used: 82
+    Current LSP:
+      Uptime: 7 minutes, 46 seconds
+    Prior LSP:
+      ID: path option 1 [72]
+      Removal Trigger: configuration changed
+      Last Error: PCALC:: No path to destination, 1921.6801.0009.00
+````
+Теперь выполним наcтройки на стороне R9, но применим другой подход. Явно укажем маршрут для построения тунеля R7(e1/1)-R5(e0/1)-R6(e0/2).
+````
+R9(config)#ip explicit-path name Customer2
+R9(cfg-ip-expl-path)#next-address 192.168.11.17
+R9(cfg-ip-expl-path)#next-address 192.168.11.1
+R9(cfg-ip-expl-path)#next-address 192.168.11.18
+
+R9(config)#int tun 9
+tunnel mpls traffic-eng path-option 1 explicit name Customer2
+tunnel mpls traffic-eng path-option 10 dynamic
+
+````
+В результате имеем маршрут туннеля
+````
+Explicit Route: 192.168.11.50 192.168.11.1 192.168.11.18 192.168.10.6
 ````
 
-````
+Удобная функция по защите от плоских колец SRLG — Shared Risk Link Group. Объединяет интерфейсы в группы, не позволяя строить основной и резервный туннели
+через интерфейсы принадлежащие одной группе.
 
+И полсдедняя функция это Affinity. Имеет смысл настраивать и использовать на разветвленной сети. Позволяет автоматически строить туннели по ранее заданным критериям. Оперирует 
+32-х битным параметром интерфейса Attribute-Flag. Сложный процесс настройки в настройке, но если правильно настроена позволяет строить туннели удовлетворяющие определенным критериям автоматически.
 
 
