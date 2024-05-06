@@ -2255,13 +2255,57 @@ interface Tunnel10
  tunnel mpls traffic-eng bandwidth 500
  tunnel mpls traffic-eng path-option 1 dynamic
 ````
-**_tunnel mpls traffic-eng priority 7 7_** такую команду не задавали, команда создана автоматически.
+**_tunnel mpls traffic-eng priority 7 7_** такую команду не задавали, команда создана автоматически как только было создано требование 
+к полосе туннеля.
+Команда имеет два параметра по поряку: Setup Priority и Hold Priority.
+Значение каждого могут варьировать от 0-наивысшего до 7-низшего приоритета.
+Логика в том, что в условиях не ограниченной полосы тракта его ресурса на все туннели может не хватить и туннели с навысшим приоритетом
+будут вытеснять туннели с низшим. Обычно выбираются одинаковые для Setup и Hold
 
+#### 14. Управление туннелями
+Можно выделить такие способы повлиять на построение туннелей как
+1 Метрика пути MPLS TE
+2 Ограничение по полосе пропускания
+3 Explicit-Path
+4 SRLG
+5 Administrative Groups/Affinity
 
+Первые два уже затронули и посмотрели в т.ч приоретизацию, разве только не опиналась функция AutoBandwidth. Суть которой
+отслеживать загрузку туннеля в течение определённого периода и адаптировать резервирование.
 
+Но мы хотим определять загрузку линков самостоятельно и в этом случае больший интерес представляет Explicit-Path.
+Вручную зададим, через какие узлы должен пройти LSP, а через какие не должен.
+CSPF рассчитает маршрут с учётом Explicit-Path.
 
+Настроим еще один туннель от R6 до R9.
 
+На стороне R6
+````
+R6(config)#interface Tunnel9
+R6(config-if)# description to Customer2_R9
+R6(config-if)# ip unnumbered Loopback0
+R6(config-if)# tunnel mode mpls traffic-eng
+R6(config-if)# tunnel destination 192.168.10.9
+R6(config-if)# tunnel mpls traffic-eng bandwidth 1000
+R6(config-if)# tunnel mpls traffic-eng path-option 1 dynamic
+*May  6 16:32:47.638: %LINEPROTO-5-UPDOWN: Line protocol on Interface Tunnel9, changed state to up
+R6(config-if)#
+````
+На стороне R9
+````
+R9(config-if-range)#exit
+R9(config)#interface Tunnel9
+R9(config-if)# description to Customer1_R6
+R9(config-if)# ip unnumbered Loopback0
+R9(config-if)# tunnel mode mpls traffic-eng
+R9(config-if)# tunnel destination 192.168.10.6
+R9(config-if)# tunnel mpls traffic-eng bandwidth 1000
+R9(config-if)# tunnel mpls traffic-eng path-option 1 dynamic
+````
+Туннель должны быть построен по короткому маршруту LSP R6-R8-R9 и наоборот.
 
+Удостоверимся.
+````
 
 
 
