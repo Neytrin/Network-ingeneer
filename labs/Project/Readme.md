@@ -1861,34 +1861,358 @@ R1(config-if)#ip nat outside
 Допустим все роутеры представленного сегмента находятся в одной зоне Area1.
 При запуске процесса IS-IS присваиваем имя Area1, подразумевая, что будет еще расширение сети и на R5 и R6 будут запущены отдельные процессы IS-IS.
 Для MPLS важно, что-бы все маршрутизаторы использовали один тип соседства, выбираем тип 2. При настройке IS-IS значение System identifier совпадает с IPv4 адресами интерфейсов Loopback 0.
+Так-же предусмотрим защитный механизм аутентификации.
 
-Настройки IS-IS на всех роутерах практически однотипны, покажем на примере R5. Настройка 
- 
+Настройки IS-IS на всех роутерах практически однотипны, покажем на примере R5. Настройку начинаем с создания цепочки ключей аутентификации
+````
+R5(config)#key chain key_isis
+R5(config-keychain)# key 1
+R5(config-keychain-key)#  key-string 7 03075218050061
+R5(config-keychain-key)#  cryptographic-algorithm md5
+````
+Создаем роутер IS-IS
+````
+R5(config)#router isis Area1
+R5(config-router)#net 49.0001.1921.6801.0005.00
+R5(config-router)#is-type level-2-only
+R5(config-router)#passive-interface Ethernet0/0
+R5(config-router)#passive-interface Ethernet1/0
+R5(config-router)#passive-interface Loopback0
+````
+Настройки на интерфейсах участвующих в процессе IS-IS
+````
+R5(config-if)#ip router isis Area1
+R5(config-if)#isis network point-to-point
+R5(config-if)#isis authentication mode md5
+R5(config-if)#isis authentication key-chain key_isis
+````
+Несколько результатов команд выводов
+
+Соседство
+````
+R5#sh isis nei
+
+Tag Area1:
+System Id      Type Interface   IP Address      State Holdtime Circuit Id
+R6             L2   Et0/2       192.168.11.18   UP    29       01
+R6             L2   Et1/2       192.168.11.22   UP    24       03
+R7             L2   Et0/1       192.168.11.2    UP    29       00
+R7             L2   Et1/1       192.168.11.6    UP    27       03
+R12            L2   Et0/3       192.168.11.26   UP    23       00
+R5#
+````
+Топология сети.
+````
+R5# sh isis topology
+
+Tag Area1:
+
+IS-IS TID 0 paths to level-2 routers
+System Id            Metric     Next-Hop             Interface   SNPA
+R5                   --
+R6                   10         R6                   Et0/2       aabb.cc00.1120
+                                R6                   Et1/2       aabb.cc00.1121
+R7                   10         R7                   Et0/1       aabb.cc00.7100
+                                R7                   Et1/1       aabb.cc00.7101
+R8                   20         R6                   Et0/2       aabb.cc00.1120
+                                R6                   Et1/2       aabb.cc00.1121
+R9                   20         R7                   Et0/1       aabb.cc00.7100
+                                R7                   Et1/1       aabb.cc00.7101
+R10                  20         R7                   Et0/1       aabb.cc00.7100
+                                R7                   Et1/1       aabb.cc00.7101
+R11                  30         R6                   Et0/2       aabb.cc00.1120
+                                R6                   Et1/2       aabb.cc00.1121
+                                R7                   Et0/1       aabb.cc00.7100
+                                R7                   Et1/1       aabb.cc00.7101
+R12                  10         R12                  Et0/3       aabb.cc00.f100
+R5#
+````
+Список маршрутов полученных по протоколу IS-IS
+````
+R5#sh ip route isis
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override
+
+Gateway of last resort is not set
+
+      192.168.0.0/24 is variably subnetted, 6 subnets, 2 masks
+i L2     192.168.0.0/30 [115/10] via 192.168.11.22, 01:27:50, Ethernet1/2
+                        [115/10] via 192.168.11.18, 01:27:50, Ethernet0/2
+i L2     192.168.0.12/30 [115/10] via 192.168.11.22, 01:27:50, Ethernet1/2
+                         [115/10] via 192.168.11.18, 01:27:50, Ethernet0/2
+      192.168.10.0/32 is subnetted, 8 subnets
+i L2     192.168.10.6 [115/10] via 192.168.11.22, 01:27:50, Ethernet1/2
+                      [115/10] via 192.168.11.18, 01:27:50, Ethernet0/2
+i L2     192.168.10.7 [115/10] via 192.168.11.6, 01:01:29, Ethernet1/1
+                      [115/10] via 192.168.11.2, 01:01:29, Ethernet0/1
+i L2     192.168.10.8 [115/20] via 192.168.11.22, 00:57:19, Ethernet1/2
+                      [115/20] via 192.168.11.18, 00:57:19, Ethernet0/2
+i L2     192.168.10.9 [115/20] via 192.168.11.6, 00:55:09, Ethernet1/1
+                      [115/20] via 192.168.11.2, 00:55:09, Ethernet0/1
+i L2     192.168.10.10 [115/20] via 192.168.11.6, 00:52:19, Ethernet1/1
+                       [115/20] via 192.168.11.2, 00:52:19, Ethernet0/1
+i L2     192.168.10.11 [115/30] via 192.168.11.22, 00:51:27, Ethernet1/2
+                       [115/30] via 192.168.11.18, 00:51:27, Ethernet0/2
+                       [115/30] via 192.168.11.6, 00:51:27, Ethernet1/1
+                       [115/30] via 192.168.11.2, 00:51:27, Ethernet0/1
+i L2     192.168.10.12 [115/10] via 192.168.11.26, 00:58:56, Ethernet0/3
+      192.168.11.0/24 is variably subnetted, 18 subnets, 2 masks
+i L2     192.168.11.8/30 [115/20] via 192.168.11.22, 01:27:50, Ethernet1/2
+                         [115/20] via 192.168.11.18, 01:27:50, Ethernet0/2
+i L2     192.168.11.12/30 [115/20] via 192.168.11.22, 01:27:50, Ethernet1/2
+                          [115/20] via 192.168.11.18, 01:27:50, Ethernet0/2
+i L2     192.168.11.28/30 [115/20] via 192.168.11.26, 00:58:56, Ethernet0/3
+                          [115/20] via 192.168.11.6, 00:58:56, Ethernet1/1
+                          [115/20] via 192.168.11.2, 00:58:56, Ethernet0/1
+i L2     192.168.11.32/30 [115/20] via 192.168.11.6, 01:01:29, Ethernet1/1
+                          [115/20] via 192.168.11.2, 01:01:29, Ethernet0/1
+i L2     192.168.11.36/30 [115/30] via 192.168.11.6, 00:52:19, Ethernet1/1
+                          [115/30] via 192.168.11.2, 00:52:19, Ethernet0/1
+i L2     192.168.11.40/30 [115/30] via 192.168.11.22, 00:57:19, Ethernet1/2
+                          [115/30] via 192.168.11.18, 00:57:19, Ethernet0/2
+i L2     192.168.11.44/30 [115/30] via 192.168.11.22, 00:55:09, Ethernet1/2
+                          [115/30] via 192.168.11.18, 00:55:09, Ethernet0/2
+                          [115/30] via 192.168.11.6, 00:55:09, Ethernet1/1
+                          [115/30] via 192.168.11.2, 00:55:09, Ethernet0/1
+i L2     192.168.11.48/30 [115/20] via 192.168.11.6, 01:01:29, Ethernet1/1
+                          [115/20] via 192.168.11.2, 01:01:29, Ethernet0/1
+R5#
+````
+
+#### 11. Настройка MPLS-TE на всех маршрутизаторах сегмента MPLS оператора.
+
+Настройка приведена на примере R5. На роутере включаем поддержку MPLS-TE
+````
+R5(config)#mpls traffic-eng tunnels
+````
+По умолчанию метрики IGP, в нашем случае IS-IS, равны метрикам TE и при построении туннеля CSPF (Constrained Shortest Path First) 
+построит LSP (Label Switched Path) ориентируясь на метрику TE.
+````
+R5# sh mpls traffic-eng top
+My_System_id: 1921.6801.0005.00 (isis  level-2)
+
+Signalling error holddown: 10 sec Global Link Generation 14
+
+IGP Id: 1921.6801.0005.00, MPLS TE Id:192.168.10.5 Router Node  (isis  level-2)
+      link[0]: Point-to-Point, Nbr IGP Id: 1921.6801.0006.00, nbr_node_id:2, gen                                                                                                             :2
+          frag_id 0, Intf Address:192.168.11.17, Nbr Intf Address:192.168.11.18
+          TE metric:10, IGP metric:10, attribute flags:0x0
+          SRLGs: None
+          physical_bw: 10000 (kbps), max_reservable_bw_global: 0 (kbps)
+          max_reservable_bw_sub: 0 (kbps)
+
+                                 Global Pool       Sub Pool
+               Total Allocated   Reservable        Reservable
+               BW (kbps)         BW (kbps)         BW (kbps)
+               ---------------   -----------       ----------
+        bw[0]:            0                0                0
+        bw[1]:            0                0                0
+        bw[2]:            0                0                0
+        bw[3]:            0                0                0
+        bw[4]:            0                0                0
+        bw[5]:            0                0                0
+        bw[6]:            0                0                0
+        bw[7]:            0                0                0
+
+      link[1]: Point-to-Point, Nbr IGP Id: 1921.6801.0006.00, nbr_node_id:2, gen                                                                                                             :2
+````
+
+Немного о метриках. Алгоритм CSPF рассчитывает кратчайший LSP на основании метрик и с учетом дополнительных ограничений
+RSVP-TE (Resource ReSerVation Protocol), заданных при настройке туннеля. Можем указать использовать 
+метрику IGP (в настройках тунельного интерфеса исп. команда **_R5(config-if)#tunnel mpls traffic-eng path-selection metric igp_**
+) вместо TE и в случае необходимости менять ее на каждом физическом интерфейсе. Так-же, в случае необходимости,
+можем изменять метрику TE для каждого интерфейса, что мне кажется более удобным. Так и поступим.
+Для основных магистральных линий (на схеме выделены красным и по легенде имеют большую пропускную способность) оставим
+метрики TE=10 неизменными тогда как для остальных увеличим до 20.
+
+Настройки для интерфейсов маршрутизатора R5.
+Для e0/3
+````
+R5(config)#int e0/3
+R5(config-if)#mpls traffic-eng tunnels
+R5(config-if)#mpls traffic-eng administrative-weight 20
+R5(config-if)#ip rsvp bandwidth 4000
+````
+Включены возможности TE, изменена метрика TE на 20, указано ограничения по полосе пропускания 4 МБит/с.
+ Команда **_ip rsvp bandwidth 4000_** является обязательной если хотим указывать требования по полосе туннеля.
+Это только референсное значение для расчёта пути TE, и фактически команда никак не ограничивает реальную скорость 
+TE-трафика, через интерфейс. Одно из возможных применений (резервирование ресурса) в условиях ограниченности ресурсов
+пропускной способности линков, исключить просчет алгоритмом CSFP маршрута LSP для тунелей емкостью свыше 6 МБит/c.
+
+Изменения после настройки
+````
+R5#sh mpls traffic-eng link-management interfaces e0/3
+System Information::
+    Links Count:          5
+Link ID::  Et0/3 (192.168.11.25)
+    Local Intfc ID:         4
+    Link Status:
+      SRLGs:                None
+      Intfc Switching Capability Descriptors:
+         Default:           Intfc Switching Cap psc1, Encoding ethernet
+      Link Label Type:      Packet
+      Physical Bandwidth:   10000 kbits/sec
+      Max Res Global BW:    4000 kbits/sec (reserved: 0% in, 0% out)
+      Max Res Sub BW:       0 kbits/sec (reserved: 100% in, 100% out)
+      MPLS TE Link State:   MPLS TE on, RSVP on, admin-up, flooded
+      Inbound Admission:    reject-huge
+      Outbound Admission:   allow-if-room
+      Link MTU:             IP 1500, MPLS 1500
+      Admin. Weight:        20 (configured)
+      IGP Neighbor Count:   1
+      Neighbor:             ID 1921.6801.0012.00, IP 192.168.11.26 (Up)
+    Flooding Status for each configured area [1]:
+      IGP Area[1]:  isis  level-2:  flooded
+````
+Для остальных интерфейсов учавствующих в процесс TE
+````
+R5(config-if)#mpls traffic-eng tunnels
+R5(config-if)#ip rsvp bandwidth 10000
+````
+Выполним аналогичные настройки для всех оставшихся роутеров.
+
+Выполняем настройки для протокола IS-IS.
+````
+R5(config)#router isis Area1
+R5(config-router)#metric-style wide
+R5(config-router)#mpls traffic-eng router-id Loopback0
+R5(config-router)#mpls traffic-eng level-2
+````
+Настройки на всех роутерах одинаковые
+
+Произведем настройку динамического туннеля между R5-R10
+````
+R5(config)#interface tunnel 10
+R5(config-if)#description to Customer1_R10
+R5(config-if)#ip unnumbered Loopback0
+R5(config-if)#tunnel mode mpls traffic-eng
+R5(config-if)#tunnel destination 192.168.10.10
+R5(config-if)#tunnel mpls traffic-eng bandwidth 500
+R5(config-if)#tunnel mpls traffic-eng path-option 1 dynamic
+````
+И сразу динамический туннель поднялся.
+````
+R5#sh mpls traffic-eng tunnels tunnel10
+
+Name: to Customer1_R10                    (Tunnel10) Destination: 192.168.10.10
+  Status:
+    Admin: up         Oper: up     Path: valid       Signalling: connected
+    path option 1, type dynamic (Basis for Setup, path weight 60)
+
+  Config Parameters:
+    Bandwidth: 500      kbps (Global)  Priority: 7  7   Affinity: 0x0/0xFFFF
+    Metric Type: TE (default)
+    AutoRoute:  disabled  LockDown: disabled  Loadshare: 500      bw-based
+    auto-bw: disabled
+  Active Path Option Parameters:
+    State: dynamic path option 1 is active
+    BandwidthOverride: disabled  LockDown: disabled  Verbatim: disabled
 
 
+  InLabel  :  -
+  OutLabel : Ethernet0/2, 16
+  RSVP Signalling Info:
+       Src 192.168.10.5, Dst 192.168.10.10, Tun_Id 10, Tun_Instance 1
+    RSVP Path Info:
+      My Address: 192.168.11.17
+      Explicit Route: 192.168.11.18 192.168.11.10 192.168.11.41 192.168.11.37
+                      192.168.10.10
+      Record   Route:   NONE
+      Tspec: ave rate=500 kbits, burst=1000 bytes, peak rate=500 kbits
+    RSVP Resv Info:
+      Record   Route:   NONE
+      Fspec: ave rate=500 kbits, burst=1000 bytes, peak rate=500 kbits
+  Shortest Unconstrained Path Info:
+    Path Weight: 20 (TE)
+    Explicit Route: 192.168.11.2 192.168.11.34 192.168.10.10
+  History:
+    Tunnel:
+      Time since created: 13 minutes, 36 seconds
+      Time since path change: 12 minutes, 23 seconds
+      Number of LSP IDs (Tun_Instances) used: 1
+    Current LSP:
+      Uptime: 12 minutes, 23 seconds
+R5#
+````
+Но заработал по маршруту через R5-R6-R8-R11-R10, вопрос почему не по кратчайшему пути.
+А проблема в том, что недонастроил интерфейсы на R7, а именно не хватало команды **_ip rsvp bandwidth_**.
+Дело в том, что при указании требования по полосе для туннеля данная команда является обязательной, иначе IGP
+эту информацию не анонсирует, а CSPF не будет учитывать эту линию и не вычислит путь под требования туннеля.
+Исправим досадную ошибку
+````
+R5#sh mpls traffic-eng tunnels tunnel10
+
+Name: to Customer1_R10                    (Tunnel10) Destination: 192.168.10.10
+  Status:
+    Admin: up         Oper: up     Path: valid       Signalling: connected
+    path option 1, type dynamic (Basis for Setup, path weight 30)
+
+  Config Parameters:
+    Bandwidth: 500      kbps (Global)  Priority: 7  7   Affinity: 0x0/0xFFFF
+    Metric Type: TE (default)
+    AutoRoute:  disabled  LockDown: disabled  Loadshare: 500      bw-based
+    auto-bw: disabled
+  Active Path Option Parameters:
+    State: dynamic path option 1 is active
+    BandwidthOverride: disabled  LockDown: disabled  Verbatim: disabled
 
 
+  InLabel  :  -
+  OutLabel : Ethernet0/1, 16
+  RSVP Signalling Info:
+       Src 192.168.10.5, Dst 192.168.10.10, Tun_Id 10, Tun_Instance 3
+    RSVP Path Info:
+      My Address: 192.168.11.1
+      Explicit Route: 192.168.11.2 192.168.11.34 192.168.10.10
+      Record   Route:   NONE
+      Tspec: ave rate=500 kbits, burst=1000 bytes, peak rate=500 kbits
+    RSVP Resv Info:
+      Record   Route:   NONE
+      Fspec: ave rate=500 kbits, burst=1000 bytes, peak rate=500 kbits
+  Shortest Unconstrained Path Info:
+    Path Weight: 30 (TE)
+    Explicit Route: 192.168.11.2 192.168.11.34 192.168.10.10
+  History:
+    Tunnel:
+      Time since created: 37 minutes, 22 seconds
+      Time since path change: 7 seconds
+      Number of LSP IDs (Tun_Instances) used: 3
+    Current LSP:
+      Uptime: 7 seconds
+      Selection: reoptimization
+    Prior LSP:
+      ID: path option 1 [1]
+      Removal Trigger: path error
+R5#
+````
+Теперь все в порядке, единственно что туннель не перестроился до того момента пока не спровоцировал повреждение 
+по маршруту ранее построенного LSP.
+````
+R5#traceroute mpls traffic-eng tunnel 10
+Tracing MPLS TE Label Switched Path on Tunnel10, timeout is 2 seconds
 
+Codes: '!' - success, 'Q' - request not sent, '.' - timeout,
+  'L' - labeled output interface, 'B' - unlabeled output interface,
+  'D' - DS Map mismatch, 'F' - no FEC mapping, 'f' - FEC mismatch,
+  'M' - malformed request, 'm' - unsupported tlvs, 'N' - no label entry,
+  'P' - no rx intf label prot, 'p' - premature termination of LSP,
+  'R' - transit router, 'I' - unknown upstream index,
+  'X' - unknown return code, 'x' - return code 0
 
+Type escape sequence to abort.
+  0 192.168.11.1 MRU 1500 [Labels: 16 Exp: 0]
+L 1 192.168.11.2 MRU 1504 [Labels: implicit-null Exp: 0] 82 ms
+! 2 192.168.11.34 9 ms
+R5#
+````
+Был построен только один однонаправленный туннель в сторону R10, необходимо организовать такой-же туннель, но только уже от R10 в сторону R5.
+````
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+````
