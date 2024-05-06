@@ -2306,13 +2306,120 @@ R9(config-if)# tunnel mpls traffic-eng path-option 1 dynamic
 
 Удостоверимся.
 ````
+R6#sh mpls traffic-eng tunnels tunnel 9
+
+Name: to Customer2_R9                     (Tunnel9) Destination: 192.168.10.9
+  Status:
+    Admin: up         Oper: up     Path: valid       Signalling: connected
+    path option 1, type dynamic (Basis for Setup, path weight 30)
+
+  Config Parameters:
+    Bandwidth: 1000     kbps (Global)  Priority: 7  7   Affinity: 0x0/0xFFFF
+    Metric Type: TE (default)
+    AutoRoute:  disabled  LockDown: disabled  Loadshare: 1000     bw-based
+    auto-bw: disabled
+  Active Path Option Parameters:
+    State: dynamic path option 1 is active
+    BandwidthOverride: disabled  LockDown: disabled  Verbatim: disabled
 
 
+  InLabel  :  -
+  OutLabel : Ethernet0/1, 16
+  RSVP Signalling Info:
+       Src 192.168.10.6, Dst 192.168.10.9, Tun_Id 9, Tun_Instance 1
+    RSVP Path Info:
+      My Address: 192.168.11.9
+      Explicit Route: 192.168.11.10 192.168.11.46 192.168.10.9
+      Record   Route:   NONE
+      Tspec: ave rate=1000 kbits, burst=1000 bytes, peak rate=1000 kbits
+    RSVP Resv Info:
+      Record   Route:   NONE
+      Fspec: ave rate=1000 kbits, burst=1000 bytes, peak rate=1000 kbits
+  Shortest Unconstrained Path Info:
+    Path Weight: 30 (TE)
+    Explicit Route: 192.168.11.10 192.168.11.46 192.168.10.9
+  History:
+    Tunnel:
+      Time since created: 42 minutes, 55 seconds
+      Time since path change: 42 minutes, 17 seconds
+      Number of LSP IDs (Tun_Instances) used: 1
+    Current LSP:
+      Uptime: 42 minutes, 17 seconds
+R6#
+````
+Да проходит, причем через интерфейс e0/0 R8 (192.168.11.10).
+теперь попробуем указать маршрут для LSP через роутеры R5 и R7.
+
+Cначала попробуем настроить на R6 так
+````
+R6(config)#ip explicit-path name Customer2
+R6(cfg-ip-expl-path)#exclude-address 192.168.11.10
+R6(cfg-ip-expl-path)#exclude-address 192.168.11.14
+Explicit Path name Customer2:
+    1: exclude-address 192.168.11.10
+    2: exclude-address 192.168.11.14
+R6(config)#int tunnel 9
+R6(config-if)#tunnel mpls traffic-eng path-option 1 explicit name Customer2
+````
+Здесь мы запрещаем строить LSP через интерфейсы e0/0-1 R8. Проверяем как построен туннель.
+````
+R6#sh mpls traffic-eng tunnels tunnel 9
+
+Name: to Customer2_R9                     (Tunnel9) Destination: 192.168.10.9
+  Status:
+    Admin: up         Oper: up     Path: valid       Signalling: connected
+    path option 1, type explicit Customer2 (Basis for Setup, path weight 40)
+
+  Config Parameters:
+    Bandwidth: 1000     kbps (Global)  Priority: 7  7   Affinity: 0x0/0xFFFF
+    Metric Type: TE (default)
+    AutoRoute:  disabled  LockDown: disabled  Loadshare: 1000     bw-based
+    auto-bw: disabled
+  Active Path Option Parameters:
+    State: explicit path option 1 is active
+    BandwidthOverride: disabled  LockDown: disabled  Verbatim: disabled
 
 
+  InLabel  :  -
+  OutLabel : Ethernet0/2, 16
+  RSVP Signalling Info:
+       Src 192.168.10.6, Dst 192.168.10.9, Tun_Id 9, Tun_Instance 3
+    RSVP Path Info:
+      My Address: 192.168.11.18
+      Explicit Route: 192.168.11.17 192.168.11.2 192.168.11.49 192.168.10.9
+      Record   Route:   NONE
+      Tspec: ave rate=1000 kbits, burst=1000 bytes, peak rate=1000 kbits
+    RSVP Resv Info:
+      Record   Route:   NONE
+      Fspec: ave rate=1000 kbits, burst=1000 bytes, peak rate=1000 kbits
+  Shortest Unconstrained Path Info:
+    Path Weight: 30 (TE)
+    Explicit Route: 192.168.11.10 192.168.11.46 192.168.10.9
+  History:
+    Tunnel:
+      Time since created: 1 hours, 29 minutes
+      Time since path change: 9 minutes, 5 seconds
+      Number of LSP IDs (Tun_Instances) used: 3
+    Current LSP:
+      Uptime: 9 minutes, 5 seconds
+    Prior LSP:
+      ID: path option 1 [1]
+      Removal Trigger: configuration changed
+````
+Полцчили маршрут R5(e0/2)-R7(e0/0)-R9(e0/1). Добились чего желали, но есть нюанс, что для данной топологии и конкретно 
+нашего случая такая настройка приведет к фатальному исходу.
+Отключим роутер R7. 
+Получили закономерный результат
+````
+*May  6 18:14:31.822: %LINEPROTO-5-UPDOWN: Line protocol on Interface Tunnel9, changed state to down``
+````
+При этом есть рабочий доступный выход через R8, но мы сами обрубили концы.
+Делаем вывод, что-бы эффективно использовать Explicit-Path нужно хорошо знать топологию сети.
 
+Переделаем как надо, повторим тот-же маршрут R5(e0/2)-R7(e0/0)-R9(e0/1).
+````
 
-
+````
 
 
 
