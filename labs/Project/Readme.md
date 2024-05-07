@@ -2516,7 +2516,70 @@ Explicit Route: 192.168.11.50 192.168.11.1 192.168.11.18 192.168.10.6
 Удобная функция по защите от плоских колец SRLG — Shared Risk Link Group. Объединяет интерфейсы в группы, не позволяя строить основной и резервный туннели
 через интерфейсы принадлежащие одной группе.
 
-И полсдедняя функция это Affinity. Имеет смысл настраивать и использовать на разветвленной сети. Позволяет автоматически строить туннели по ранее заданным критериям. Оперирует 
-32-х битным параметром интерфейса Attribute-Flag. Сложный процесс настройки в настройке, но если правильно настроена позволяет строить туннели удовлетворяющие определенным критериям автоматически.
+И посдедняя функция это Affinity. Имеет смысл настраивать и использовать на разветвленной сети. Позволяет автоматически строить туннели по ранее заданным критериям. Оперирует 
+32-х битным параметром интерфейса Attribute-Flag. Сложный процесс настройки, но если правильно настроена позволяет строить туннели удовлетворяющие определенным критериям автоматически.
 
 #### 15. Построение защитных туннелей.
+
+MPLS-TE два решения для обеспечения стабильности трафика и уменьшение времени простоя. Для этого используются механизмы Path Protection и Local Protection.
+Для нашей схемы используем Path Protection. Суть ее заключается в том, что при настройке тунеля указывается, необходимость в построении двух LSP Primary и Secondary.
+
+Настроим туннель между R7 и R11. Маршруты построения LSP для основного и защитного туннеля зададим вручную. При создании ip explicit-path используем IP address интерфейсов Loopback маршрутизаторов.
+
+Покажем настройку на примере R7
+````
+R7(config)#ip explicit-path name Customer3
+R7(cfg-ip-expl-path)#next-address 192.168.10.10
+
+R7(config)#ip explicit-path name Customer3_protect
+R7(cfg-ip-expl-path)#next-address 192.168.10.9
+R7(cfg-ip-expl-path)#next-address 192.168.10.8
+
+R7(config)#interface Tunnel11
+R7(config-if)#description to Customer3_R11
+R7(config-if)#ip unnumbered Loopback0
+R7(config-if)#tunnel mode mpls traffic-eng
+R7(config-if)#tunnel destination 192.168.10.11
+R7(config-if)#tunnel mpls traffic-eng bandwidth 1000
+R7(config-if)#tunnel mpls traffic-eng path-option 5 explicit name Customer3
+R7(config-if)#tunnel mpls traffic-eng path-option protect 5 explicit name Customer3_protect
+````
+Путь рабочего тунеля проходит R7-R10-R11, а защитного R7-R9-R8-R11.
+````
+R7#sh mpls traffic-eng tunnels tunnel 11 protection
+to Customer3_R11
+  LSP Head, Tunnel11, Admin: up, Oper: up
+  Src 192.168.10.7, Dest 192.168.10.11, Instance 1
+  Fast Reroute Protection: None
+  Path Protection: 0 Common Link(s), 0 Common Node(s)
+    Primary lsp path:192.168.11.34 192.168.11.38
+                     192.168.10.11
+    Protect lsp path:192.168.11.49 192.168.11.45
+                     192.168.11.41 192.168.10.11
+
+    Path Protect Parameters:
+      Bandwidth: 1000     kbps (Global)  Priority: 4  4   Affinity: 0x0/0xFFFF
+      Metric Type: TE (default)
+    InLabel  :  -
+    OutLabel : Ethernet1/1, 16
+    RSVP Signalling Info:
+         Src 192.168.10.7, Dst 192.168.10.11, Tun_Id 11, Tun_Instance 33
+      RSVP Path Info:
+        My Address: 192.168.11.50
+        Explicit Route: 192.168.11.49 192.168.11.45 192.168.11.41 192.168.10.11
+        Record   Route:   NONE
+        Tspec: ave rate=1000 kbits, burst=1000 bytes, peak rate=1000 kbits
+      RSVP Resv Info:
+        Record   Route:   NONE
+        Fspec: ave rate=1000 kbits, burst=1000 bytes, peak rate=1000 kbits
+R7#
+````
+Произведем аналогичные настройки для R11.
+Итак, построено 2-а туннеля, один из которых защитный, что горантирует за счет уже просчитанного LSP сократить время на переключение. 
+Минусом является, что защитный туннель при исправном рабочем будет простаивать, но при этом отнимать часть пропускной способности линков.
+
+#### 16. MPLS L2VPN
+
+До этого момента занимались только построение туннелей, 
+
+
