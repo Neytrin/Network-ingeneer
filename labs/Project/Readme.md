@@ -18,21 +18,22 @@
 - Настройка DHCP сервера на R3 и R4
 - Настроить протокол OSPF
 - На R1 и R2 настроить маршруты по-умолчанию.
-4. [Настроить EIGRP на сети провайдера ISP2.]()
-5. [Настроить eBGP между оператором и ISP, а так-же между ISP1 и ISP2.]()
-6. [Настроить iBGP между R1 и R2 в сети офиса оператора]()
-7. [Настроить iBGP в сети ISP2 с разбиением на 2-а кластера с двумя RR в каждой.]()
-8. [Манипуляция с атрибутами BGP в сети офиса оператора.]()
-9. [Настроить NAT на R1 и R2 в сети оператора]()
+4. [Настроить EIGRP на сети провайдера ISP2.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/Project/Readme.md#4-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-eigrp-%D0%BD%D0%B0-%D1%81%D0%B5%D1%82%D0%B8-isp2-%D0%B2-%D0%B8%D0%BC%D0%B5%D0%BD%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D0%BE%D0%BC-%D1%80%D0%B5%D0%B6%D0%B8%D0%BC%D0%B5)
+5. [Настроить eBGP между оператором и ISP, а так-же между ISP1 и ISP2.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/Project/Readme.md#5-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-ebgp-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%BE%D0%BC-%D0%B8-isp-%D0%B0-%D1%82%D0%B0%D0%BA-%D0%B6%D0%B5-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-isp1-%D0%B8-isp2)
+6. [Настроить iBGP между R1 и R2 в сети офиса оператора](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/Project/Readme.md#6-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-ibgp-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-r1-%D0%B8-r2-%D0%B2-%D1%81%D0%B5%D1%82%D0%B8-%D0%BE%D1%84%D0%B8%D1%81%D0%B0-%D0%BE%D1%80%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%B0)
+7. [Настроить iBGP в сети ISP2 с разбиением на 2-а кластера с двумя RR в каждой.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/Project/Readme.md#7-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-ibgp-%D0%B2-%D1%81%D0%B5%D1%82%D0%B8-isp2-%D1%81-%D1%80%D0%B0%D0%B7%D0%B1%D0%B8%D0%B5%D0%BD%D0%B8%D0%B5%D0%BC-%D0%BD%D0%B0-2-%D0%B0-%D0%BA%D0%BB%D0%B0%D1%81%D1%82%D0%B5%D1%80%D0%B0-%D1%81-%D0%B4%D0%B2%D1%83%D0%BC%D1%8F-rr-%D0%B2-%D0%BA%D0%B0%D0%B6%D0%B4%D0%BE%D0%B9)
+8. [Манипуляция с атрибутами BGP в сети офиса оператора.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/Project/Readme.md#8-%D0%BC%D0%B0%D0%BD%D0%B8%D0%BF%D1%83%D0%BB%D1%8F%D1%86%D0%B8%D1%8F-%D1%81-%D0%B0%D1%82%D1%80%D0%B8%D0%B1%D1%83%D1%82%D0%B0%D0%BC%D0%B8-bgp-%D0%B2-%D1%81%D0%B5%D1%82%D0%B8-%D0%BE%D1%84%D0%B8%D1%81%D0%B0-%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%B0)
+9. [Настроить NAT на R1 и R2 в сети оператора](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/Project/Readme.md#9-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-nat-%D0%BD%D0%B0-r1-%D0%B8-r2-%D0%B2-%D1%81%D0%B5%D1%82%D0%B8-%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%B0)
 
 #### Часть 2.
 
-10. [Настроить протокол динамической маршрутизации IS-IS в MPLS сегменте сети провайдера.]()
-11. [Построение динамического туннеля.]()
-12. [Приоритизация туннелей]()
-13. [Управление туннелями]()
-14. [Построение защитных туннелей.]()
-15. [Построить L3VPN в туннеле MPLS-TE.]()
+10. [Настроить протокол динамической маршрутизации IS-IS в MPLS сегменте сети провайдера.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/Project/Readme.md#10-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D1%8C-%D0%BF%D1%80%D0%BE%D1%82%D0%BE%D0%BA%D0%BE%D0%BB-%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B9-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8-is-is-%D0%B2-mpls-%D1%81%D0%B5%D0%B3%D0%BC%D0%B5%D0%BD%D1%82%D0%B5-%D1%81%D0%B5%D1%82%D0%B8-%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D0%B0)
+11. [Настроить MPLS-TE на всех маршрутизаторах сегмента MPLS оператора.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/Project/Readme.md#11-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-mpls-te-%D0%BD%D0%B0-%D0%B2%D1%81%D0%B5%D1%85-%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%B8%D0%B7%D0%B0%D1%82%D0%BE%D1%80%D0%B0%D1%85-%D1%81%D0%B5%D0%B3%D0%BC%D0%B5%D0%BD%D1%82%D0%B0-mpls-%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%B0)
+12. [Построение динамического туннеля.](https://github.com/Neytrin/Network-ingeneer/blob/main/labs/Project/Readme.md#11-%D0%BF%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B3%D0%BE-%D1%82%D1%83%D0%BD%D0%BD%D0%B5%D0%BB%D1%8F)
+13. [Приоритизация туннелей]()
+14. [Управление туннелями]()
+15. [Построение защитных туннелей.]()
+16. [Построить L3VPN в туннеле MPLS-TE.]()
 
 #### 1. Разработать схему лабораторного стенда, задокументировать адресное пространство.
 
