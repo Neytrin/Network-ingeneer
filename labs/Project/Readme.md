@@ -2655,3 +2655,5 @@ R25#
 ````
 
 Все настройки конфигурации сетевых элементов стенда [здесь](https://github.com/Neytrin/Network-ingeneer/blob/37e0463067f27f5d5649f3d3df46612495e99640/labs/Project/Configs)
+
+
