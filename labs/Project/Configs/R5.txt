@@ -1,0 +1,237 @@
+Current configuration : 4103 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R5
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$FhrG$pdivEqOHWiUpNN76UWpie/
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name DomenMPLS.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+mpls traffic-eng tunnels
+!
+!
+key chain key_isis
+ key 1
+  key-string 7 03075218050061
+  cryptographic-algorithm md5
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$fZPU$k98NeKdJwbicDnfsHT3K0/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.10.5 255.255.255.255
+ ipv6 address 2022:A304:20BF:8::5/128
+ ipv6 enable
+!
+interface Tunnel1
+ no ip address
+!
+interface Tunnel10
+ description to Customer1_R10
+ ip unnumbered Loopback0
+ tunnel mode mpls traffic-eng
+ tunnel destination 192.168.10.10
+ tunnel mpls traffic-eng priority 7 7
+ tunnel mpls traffic-eng bandwidth 500
+ tunnel mpls traffic-eng path-option 1 dynamic
+ no routing dynamic
+!
+interface Ethernet0/0
+ description to_R2
+ ip address 192.168.0.6 255.255.255.252
+ ip router isis Area1
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 070C285F4D06
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address FE80::5 link-local
+ ipv6 address 2022:A304:20BF::2:5:2/96
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ isis network point-to-point
+ isis authentication mode md5
+!
+interface Ethernet0/1
+ description to_R7
+ ip address 192.168.11.1 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 10000
+!
+interface Ethernet0/2
+ description to_R6
+ ip address 192.168.11.17 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 10000
+!
+interface Ethernet0/3
+ description to_R12
+ ip address 192.168.11.25 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ mpls traffic-eng administrative-weight 20
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 4000
+!
+interface Ethernet1/0
+ description to_R1
+ ip address 192.168.0.10 255.255.255.252
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 070C285F4D06
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address FE80::5 link-local
+ ipv6 address 2022:A304:20BF::3:5:1/96
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface Ethernet1/1
+ description to_R7
+ ip address 192.168.11.5 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 10000
+!
+interface Ethernet1/2
+ description to_R6
+ ip address 192.168.11.21 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 10000
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+interface Ethernet2/0
+ no ip address
+ shutdown
+!
+interface Ethernet2/1
+ no ip address
+ shutdown
+!
+interface Ethernet2/2
+ no ip address
+ shutdown
+!
+interface Ethernet2/3
+ no ip address
+ shutdown
+!
+router ospf 1
+!
+router isis Area1
+ mpls traffic-eng router-id Loopback0
+ mpls traffic-eng level-2
+ net 49.0001.1921.6801.0005.00
+ is-type level-2-only
+ metric-style wide
+ passive-interface Ethernet1/0
+ passive-interface Loopback0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+ipv6 router ospf 1
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 045802150C2E
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 00071A150754
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

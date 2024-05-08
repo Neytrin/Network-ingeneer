@@ -1,0 +1,151 @@
+Current configuration : 2115 bytes
+!
+! Last configuration change at 19:54:41 MSK Wed May 8 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R12
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$a7.a$fQHizpOw4Tv2Cbc7IpQvP/
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name DomenMPLS.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+mpls traffic-eng tunnels
+!
+!
+key chain key_isis
+ key 1
+  key-string 7 03075218050061
+  cryptographic-algorithm md5
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$Okp8$.sN1rH/3.eKe1tt5GXWCG1
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.10.12 255.255.255.255
+!
+interface Ethernet0/0
+ description to_R5
+ ip address 192.168.11.26 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ mpls traffic-eng administrative-weight 20
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 4000
+!
+interface Ethernet0/1
+ description to_R7
+ ip address 192.168.11.29 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ mpls traffic-eng administrative-weight 20
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 4000
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+router isis Area1
+ mpls traffic-eng router-id Loopback0
+ mpls traffic-eng level-2
+ net 49.0001.1921.6801.0012.00
+ is-type level-2-only
+ metric-style wide
+ passive-interface Loopback0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 02050D480809
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 070C285F4D06
+ logging synchronous
+ login
+ transport input none
+!
+!
+end

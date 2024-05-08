@@ -1,0 +1,225 @@
+Current configuration : 4074 bytes
+!
+! Last configuration change at 14:41:24 MSK Wed May 8 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R7
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$9Koe$F/9NtMuWZ2wE6r37aBEgQ0
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip vrf Customer3
+ rd 65001:20
+ route-target export 65001:20
+ route-target import 65001:20
+!
+!
+!
+!
+no ip domain lookup
+ip domain name DomenMPLS.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+mpls traffic-eng tunnels
+!
+!
+key chain key_isis
+ key 1
+  key-string 7 03075218050061
+  cryptographic-algorithm md5
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$EtG7$76HOExPKdr9kNz5B.VgI31
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.10.7 255.255.255.255
+!
+interface Tunnel11
+ description to Customer3_R11
+ ip unnumbered Loopback0
+ tunnel mode mpls traffic-eng
+ tunnel destination 192.168.10.11
+ tunnel mpls traffic-eng autoroute announce
+ tunnel mpls traffic-eng priority 4 4
+ tunnel mpls traffic-eng bandwidth 1000
+ tunnel mpls traffic-eng path-option 5 explicit name Customer3
+ tunnel mpls traffic-eng path-option protect 5 explicit name Customer3_protect
+ no routing dynamic
+!
+interface Ethernet0/0
+ description to_R5
+ ip address 192.168.11.2 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 10000
+!
+interface Ethernet0/1
+ description to_R10
+ ip address 192.168.11.33 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ mpls traffic-eng administrative-weight 20
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 4000
+!
+interface Ethernet0/2
+ description to_Customer3
+ ip vrf forwarding Customer3
+ ip address 10.10.1.1 255.255.255.0
+!
+interface Ethernet0/3
+ description to_R12
+ ip address 192.168.11.30 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ mpls traffic-eng administrative-weight 20
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 4000
+!
+interface Ethernet1/0
+ description to_R5
+ ip address 192.168.11.6 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 10000
+!
+interface Ethernet1/1
+ description to_R9
+ ip address 192.168.11.50 255.255.255.252
+ ip router isis Area1
+ mpls traffic-eng tunnels
+ mpls traffic-eng administrative-weight 20
+ isis network point-to-point
+ isis authentication mode md5
+ isis authentication key-chain key_isis
+ ip rsvp bandwidth 4000
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router isis Area1
+ mpls traffic-eng router-id Loopback0
+ mpls traffic-eng level-2
+ net 49.0001.1921.6801.0007.00
+ is-type level-2-only
+ metric-style wide
+ passive-interface Loopback0
+!
+router bgp 65001
+ bgp log-neighbor-changes
+ neighbor 192.168.10.11 remote-as 65001
+ neighbor 192.168.10.11 update-source Loopback0
+ !
+ address-family vpnv4
+  neighbor 192.168.10.11 activate
+  neighbor 192.168.10.11 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf Customer3
+  redistribute connected
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+ip explicit-path name Customer3 enable
+ next-address 192.168.10.10
+!
+ip explicit-path name Customer3_protect enable
+ next-address 192.168.10.9
+ next-address 192.168.10.8
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C Unauthorized access is strictly prohibited ^C
+!
+line con 0
+ exec-timeout 0 0
+ password 7 104D000A0618
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ exec-timeout 15 0
+ password 7 030752180500
+ logging synchronous
+ login
+ transport input none
+!
+!
+end
