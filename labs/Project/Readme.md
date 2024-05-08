@@ -2589,7 +2589,7 @@ R7#
 
 ![L3VPN_Customer3.png](Stend%2FL3VPN_Customer3.png)
 
-Покажем настройку на примере R7
+Покажем настройку на примере R7, аналогично настриваем и на R11.
 ````
 R7(config)#ip vrf Customer3
 R7(config-vrf)#rd 65001:20
@@ -2612,10 +2612,45 @@ R7(config-router-af)#redistribute connected
 R7(config)#interface tunnel 11
 R7(config-if)#tunnel mpls traffic-eng autoroute announce
 ````
+Маршруты в vrf Customer3
 
+````
+R7#sh ip route vrf Customer3
 
+Routing Table: Customer3
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override
 
+Gateway of last resort is not set
 
-
-
+      10.0.0.0/8 is variably subnetted, 3 subnets, 2 masks
+C        10.10.1.0/24 is directly connected, Ethernet0/2
+L        10.10.1.1/32 is directly connected, Ethernet0/2
+B        10.10.2.0/24 [200/0] via 192.168.10.11, 02:33:27
+R7#
+````
+````
+R7# sh mpls traffic-eng autoroute
+MPLS TE autorouting enabled
+  destination 1921.6801.0011.00, area isis  level-2, has 1 tunnels
+    Tunnel11    (load balancing metric 2000000, nexthop 192.168.10.11)
+                (flags: Announce)
+R7#
+````
+Проверим доступность интерфейса e0/0 R26 со стороны R25
+````
+R25#ping 10.10.2.2
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.10.2.2, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms
+R25#
+````
 
