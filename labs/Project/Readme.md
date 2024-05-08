@@ -8,6 +8,8 @@
 
 Задачи:
 
+#### Часть 1.
+
 1. Разработать схему лабораторного стенда, задокументировать адресное пространство.
 2. Для всех сетевых элементов выполнить первичные настройки, интерфейсам присвоить IP адреса.
 3. Настроить сеть офиса оператора
@@ -22,6 +24,9 @@
 7. Настроить iBGP в сети ISP2 с разбиением на 2-а кластера с двумя RR в каждой.
 8. Манипуляция с атрибутами BGP в сети офиса оператора.
 9. Настроить NAT на R1 и R2 в сети оператора
+
+#### Часть 2.
+
 10. Настроить протокол динамической маршрутизации IS-IS в MPLS сегменте сети провайдера.
 11. 
 
@@ -2584,7 +2589,33 @@ R7#
 
 ![L3VPN Customer3.png](Stend%2FL3VPN%20Customer3.png)
 
-Покажем настройки на примере R7
+Покажем настройку на примере R7
 ````
+R7(config)#ip vrf Customer3
+R7(config-vrf)#rd 65001:20
+R7(config-vrf)#route-target export 65001:20
+R7(config-vrf)#route-target import 65001:20
+R7(config-vrf)#exit
+R7(config)int e0/2
+R7(config-if)#description to_Customer3
+R7(config-if)#ip vrf forwarding Customer3
+R7(config-if)#ip address 10.10.1.1 255.255.255.0
+R7(config-if)#router bgp 65001
+R7(config-router)#neighbor 192.168.10.11 remote-as 65001
+R7(config-router)#neighbor 192.168.10.11 update-source Loopback0
+R7(config-router)#address-family vpnv4
+R7(config-router-af)#neighbor 192.168.10.11 activate
+R7(config-router-af)#neighbor 192.168.10.11 send-community both
+R7(config-router-af)#exit
+R7(config-router)#address-family ipv4 vrf Customer3
+R7(config-router-af)#redistribute connected
+R7(config)#interface tunnel 11
+R7(config-if)#tunnel mpls traffic-eng autoroute announce
+````
+
+
+
+
+
 
 
