@@ -2587,7 +2587,7 @@ R7#
 
 Уже есть построенный туннель с защитой между R7 и R11. Настроим L3VPN для Customer3.
 
-![L3VPN Customer3.png](Stend%2FL3VPN%20Customer3.png)
+![L3VPN_Customer3.png](Stend%2FL3VPN_Customer3.png)
 
 Покажем настройку на примере R7
 ````
